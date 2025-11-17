@@ -5,6 +5,53 @@ document.addEventListener('DOMContentLoaded', function() {
     if (mainContent) {
         mainContent.scrollTop = 0;
     }
+    
+    // Sync gradient banner height with image banner height
+    function syncBannerHeights() {
+        const imageBanner = document.querySelector('.lab-card-banner-image');
+        const gradientBanner = document.querySelector('.lab-card-banner-gradient');
+        
+        if (imageBanner && gradientBanner) {
+            // Use a more reliable method to get image height
+            const updateHeight = () => {
+                // Try both naturalHeight and offsetHeight
+                let imageHeight = imageBanner.naturalHeight || imageBanner.offsetHeight || imageBanner.clientHeight;
+                
+                // If natural height is available but might be 0 due to CSS, use offsetHeight
+                if (imageHeight === 0 || !imageHeight) {
+                    imageHeight = imageBanner.offsetHeight || imageBanner.clientHeight;
+                }
+                
+                // Also check the parent container height
+                const bannerContainer = imageBanner.closest('.lab-card-banner');
+                if (bannerContainer && !imageHeight) {
+                    imageHeight = bannerContainer.offsetHeight;
+                }
+                
+                if (imageHeight > 0) {
+                    gradientBanner.style.height = imageHeight + 'px';
+                }
+            };
+            
+            // Check if image is already loaded
+            if (imageBanner.complete && imageBanner.naturalHeight !== 0) {
+                updateHeight();
+            } else {
+                // Wait for image to load
+                imageBanner.addEventListener('load', updateHeight, { once: true });
+                // Also update after a short delay in case load event already fired
+                setTimeout(updateHeight, 100);
+            }
+        }
+    }
+    
+    // Sync heights on load, after images load, and on resize
+    syncBannerHeights();
+    window.addEventListener('load', syncBannerHeights);
+    window.addEventListener('resize', syncBannerHeights);
+    
+    // Also sync after DOM is fully ready
+    setTimeout(syncBannerHeights, 500);
     // Intersection Observer for fade-in animations
     const observerOptions = {
         threshold: 0.1,
@@ -97,10 +144,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 sidebar.dataset.currentTab = tabName;
             }
 
-            if (tabName === 'studio') {
-                console.log('Studio tab selected');
-            } else if (tabName === 'lab') {
-                console.log('Lab tab selected');
+            // Update hero title and subtitle based on selected tab
+            const heroTitle = document.querySelector('.hero-title');
+            const heroSubtitle = document.querySelector('.hero-subtitle');
+            
+            if (heroTitle && heroSubtitle) {
+                if (tabName === 'studio') {
+                    heroTitle.textContent = 'Design partner for ambitious founders';
+                    heroSubtitle.textContent = 'Oberyon partners with founders and startups to create high-converting, meaningful and purpose-driven design for users.';
+                    console.log('Studio tab selected');
+                } else if (tabName === 'lab') {
+                    heroTitle.textContent = 'AI-focused product lab founded by entrepreneurs';
+                    heroSubtitle.textContent = 'We like to ship fast, be autonomous, talk openly, and reject the things that get in the way of that. You\'ll find beautiful software and small stellar teams here.';
+                    console.log('Lab tab selected');
+                }
             }
         });
     });

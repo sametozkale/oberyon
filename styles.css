@@ -501,8 +501,14 @@ img {
     border-radius: 15px 15px 0 0;
 }
 
-.lab-card-banner:empty {
+.lab-card-banner:empty:not(.lab-card-banner-gradient) {
     display: none;
+}
+
+.lab-card-banner.lab-card-banner-gradient {
+    display: flex !important;
+    min-height: 160px;
+    background: linear-gradient(135deg, #c3c2ae 0%, #d4d3be 50%, #b7b6a3 100%) !important;
 }
 
 .lab-card-banner-image {
