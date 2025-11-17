@@ -202,7 +202,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     
                     // Update button for Lab tab
                     if (bookButton) {
-                        bookButton.textContent = 'Work with us';
+                        bookButton.textContent = 'Join us';
                         bookButton.href = 'https://cal.com/sametozkale/work-with-us';
                         bookButton.setAttribute('aria-label', 'Work with us');
                     }
