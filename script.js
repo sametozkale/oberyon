@@ -147,15 +147,90 @@ document.addEventListener('DOMContentLoaded', function() {
             // Update hero title and subtitle based on selected tab
             const heroTitle = document.querySelector('.hero-title');
             const heroSubtitle = document.querySelector('.hero-subtitle');
+            const bookButton = document.querySelector('.btn-primary');
+            
+            // Find feature items
+            const featureItems = document.querySelectorAll('.feature-item');
+            const skillsetFeatureItem = featureItems[0];
+            const aboutFeatureItem = featureItems[1];
+            
+            const skillsetTitle = skillsetFeatureItem ? skillsetFeatureItem.querySelector('.feature-title') : null;
+            const skillsetList = skillsetFeatureItem ? skillsetFeatureItem.querySelector('.feature-list') : null;
+            const aboutTitle = aboutFeatureItem ? aboutFeatureItem.querySelector('.feature-title') : null;
+            const aboutList = aboutFeatureItem ? aboutFeatureItem.querySelector('.feature-list') : null;
             
             if (heroTitle && heroSubtitle) {
                 if (tabName === 'studio') {
                     heroTitle.textContent = 'Design partner for ambitious founders';
                     heroSubtitle.textContent = 'Oberyon partners with founders and startups to create high-converting, meaningful and purpose-driven design for users.';
+                    
+                    // Update button for Studio tab
+                    if (bookButton) {
+                        bookButton.textContent = 'Book an intro call';
+                        bookButton.href = 'https://cal.com/sametozkale/meetwithme';
+                        bookButton.setAttribute('aria-label', 'Book an intro call');
+                    }
+                    
+                    // Update Skillset section for Studio tab
+                    if (skillsetTitle && skillsetList) {
+                        skillsetTitle.textContent = 'Skillset';
+                        skillsetList.innerHTML = `
+                            <li>Product design</li>
+                            <li>Web design</li>
+                            <li>Design systems</li>
+                            <li>AI strategy</li>
+                            <li>Product management</li>
+                        `;
+                    }
+                    
+                    // Update About section for Studio tab
+                    if (aboutTitle && aboutList) {
+                        aboutTitle.textContent = 'About';
+                        aboutList.innerHTML = `
+                            <li>GMT+2</li>
+                            <li>Worldwide service</li>
+                            <li>10+ years of experience</li>
+                            <li>25+ projects completed</li>
+                            <li>English, Turkish, German</li>
+                        `;
+                    }
+                    
                     console.log('Studio tab selected');
                 } else if (tabName === 'lab') {
                     heroTitle.textContent = 'AI-focused product lab founded by entrepreneurs';
                     heroSubtitle.textContent = 'We like to ship fast, be autonomous, talk openly, and reject the things that get in the way of that. You\'ll find beautiful software and small stellar teams here.';
+                    
+                    // Update button for Lab tab
+                    if (bookButton) {
+                        bookButton.textContent = 'Work with us';
+                        bookButton.href = 'https://cal.com/sametozkale/work-with-us';
+                        bookButton.setAttribute('aria-label', 'Work with us');
+                    }
+                    
+                    // Update Looking for section for Lab tab
+                    if (skillsetTitle && skillsetList) {
+                        skillsetTitle.textContent = 'Looking for (side-hustle)';
+                        skillsetList.innerHTML = `
+                            <li>AI engineers</li>
+                            <li>GTM engineers</li>
+                            <li>Design engineers</li>
+                            <li>Marketing enthusiasts</li>
+                            <li>Chiefs of staff</li>
+                        `;
+                    }
+                    
+                    // Update Focus section for Lab tab
+                    if (aboutTitle && aboutList) {
+                        aboutTitle.textContent = 'Focus';
+                        aboutList.innerHTML = `
+                            <li>Software interaction</li>
+                            <li>Agentic AI</li>
+                            <li>Vibe-coding process</li>
+                            <li>Agent universe</li>
+                            <li>Agent to Agent protocol</li>
+                        `;
+                    }
+                    
                     console.log('Lab tab selected');
                 }
             }
@@ -200,6 +275,42 @@ window.addEventListener('load', function() {
         }
     }
 });
+
+// Move footer after main-content on responsive
+function handleResponsiveFooter() {
+    const footer = document.querySelector('.sidebar-footer');
+    const layout = document.querySelector('.layout');
+    const mainContent = document.querySelector('.main-content');
+    
+    if (!footer || !layout || !mainContent) return;
+    
+    const isMobile = window.matchMedia('(max-width: 1024px)').matches;
+    
+    if (isMobile) {
+        // Move footer to layout level after main-content
+        if (footer.parentElement === layout) {
+            // Already moved, do nothing
+            return;
+        }
+        // Remove from sidebar
+        footer.remove();
+        // Insert after main-content in layout
+        layout.insertBefore(footer, mainContent.nextSibling);
+        footer.style.display = 'flex';
+    } else {
+        // Move footer back to sidebar on desktop
+        const sidebarContent = document.querySelector('.sidebar-content');
+        if (sidebarContent && footer.parentElement === layout) {
+            footer.remove();
+            sidebarContent.parentElement.appendChild(footer);
+            footer.style.display = '';
+        }
+    }
+}
+
+// Handle footer on load and resize
+handleResponsiveFooter();
+window.addEventListener('resize', handleResponsiveFooter);
 
 // Performance optimization: Reduce motion for users who prefer it
 if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {

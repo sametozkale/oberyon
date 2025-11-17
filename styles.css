@@ -353,7 +353,7 @@ img {
     width: 12px;
     height: 12px;
     flex-shrink: 0;
-    color: #B8B89F;
+    color: #ABA88C;
 }
 
 .badge-icon .sparkle-main {
@@ -404,7 +404,7 @@ img {
     font-weight: 500;
     letter-spacing: 0px;
     text-transform: uppercase;
-    color: #B8B89F;
+    color: #ABA88C;
     white-space: nowrap;
 }
 
@@ -415,7 +415,7 @@ img {
 .testimonial-text {
     font-size: 12px;
     line-height: 1.5;
-    color: var(--muted-color);
+    color: rgba(102, 102, 102, 0.7);
     padding: 0;
 }
 
@@ -438,9 +438,9 @@ img {
 .portfolio {
     padding: 0;
     width: 100%;
-    padding-right: 16px;
+    padding-right: 8px;
     padding-top: 16px;
-    padding-bottom: 8px;
+    padding-bottom: 16px;
 }
 
 .portfolio-grid {
@@ -450,7 +450,7 @@ img {
     width: 100%;
     max-width: var(--max-width-image);
     margin-left: auto;
-    margin-right: 16px;
+    margin-right: 0;
 }
 
 .lab-panel[hidden] {
@@ -459,7 +459,7 @@ img {
 
 .lab-panel {
     width: 100%;
-    padding: 16px 16px 32px 0;
+    padding: 16px 8px 16px 0;
 }
 
 .lab-grid {
@@ -469,7 +469,7 @@ img {
     width: 100%;
     max-width: var(--max-width-image);
     margin-left: auto;
-    margin-right: 16px;
+    margin-right: 0;
 }
 
 @media (max-width: 900px) {
@@ -627,7 +627,10 @@ img {
     justify-content: center;
     gap: 8px;
     margin-left: 24px;
+    margin-right: 24px;
     margin-bottom: 24px;
+    max-width: calc(100% - 48px);
+    box-sizing: border-box;
 }
 
 .lab-card-link.btn-secondary {
@@ -849,9 +852,9 @@ img {
     
     .portfolio {
         padding: 0;
-        padding-right: 16px;
+        padding-right: 8px;
         padding-top: 16px;
-        padding-bottom: 8px;
+        padding-bottom: 16px;
     }
     
     .portfolio-item {
@@ -879,9 +882,9 @@ img {
     
     .portfolio {
         padding: 0;
-        padding-right: 16px;
+        padding-right: 8px;
         padding-top: 16px;
-        padding-bottom: 8px;
+        padding-bottom: 16px;
     }
     
     .portfolio-item {
@@ -893,7 +896,7 @@ img {
 @media (max-width: 1024px) {
     .layout {
         flex-direction: column;
-        gap: 24px;
+        gap: 8px;
         padding-left: 16px;
         padding-right: 8px;
     }
@@ -910,29 +913,45 @@ img {
         top: 0;
         max-height: none;
         height: auto;
-        min-height: calc(100vh - 16px);
+        min-height: auto;
+        padding-bottom: 0;
+        padding-top: 0;
+        margin-top: 0;
+        margin-bottom: 0;
+        gap: 12px;
+    }
+    
+    .logo-section {
+        gap: 16px;
+    }
+    
+    .main-content {
+        overflow-x: visible;
+        padding-right: 0;
         padding-bottom: 0;
     }
     
     .sidebar-footer {
         position: relative;
         bottom: auto;
-        margin-top: auto;
+        margin-top: 0;
         margin-bottom: 16px;
+        margin-left: 16px;
+        margin-right: 8px;
         opacity: 1 !important;
         transform: translateY(0) !important;
     }
     
-    .main-content {
-        overflow-x: visible;
-        padding-right: 0;
-    }
-    
     .portfolio {
         padding: 0;
-        padding-right: 16px;
-        padding-top: 16px;
-        padding-bottom: 8px;
+        padding-right: 8px;
+        padding-top: 0;
+        padding-bottom: 16px;
+    }
+    
+    .lab-panel {
+        padding-top: 0;
+        padding-bottom: 16px;
     }
     
     .portfolio-item {
@@ -945,8 +964,33 @@ img {
         margin-right: 0;
     }
     
+    .portfolio-grid {
+        margin-left: 0;
+        margin-right: 0;
+        max-width: 100%;
+    }
+    
     .hero-title {
         font-size: 22px;
+    }
+    
+    .lab-card-header {
+        padding: 8px 20px 0 20px;
+    }
+    
+    .lab-card-description {
+        padding: 4px 20px 0 20px;
+    }
+    
+    .lab-card-meta {
+        padding: 0 20px;
+    }
+    
+    .lab-card-link {
+        margin-left: 20px;
+        margin-right: 20px;
+        margin-bottom: 20px;
+        max-width: calc(100% - 40px);
     }
 }
 
@@ -955,20 +999,66 @@ img {
     .layout {
         padding-left: 16px;
         padding-right: 8px;
-        gap: 16px;
+        gap: 0;
     }
     
     .main-content {
         padding-right: 0;
+        padding-bottom: 0;
+    }
+    
+    .lab-panel {
+        padding-top: 0;
+        padding-bottom: 16px;
+        margin-top: 0;
     }
     
     .sidebar-content {
-        gap: 24px;
-        min-height: calc(100vh - 16px);
+        gap: 12px;
+        min-height: auto;
+        margin-bottom: 0;
+        margin-top: 0;
+        padding-top: 0;
+    }
+    
+    .sidebar-footer {
+        margin-top: 0;
+        margin-bottom: 16px;
+        margin-left: 16px;
+        margin-right: 8px;
+    }
+    
+    .portfolio {
+        padding-top: 0;
+        margin-top: 0;
+    }
+    
+    .lab-panel {
+        padding-top: 0;
+        margin-top: 0;
     }
     
     .logo-section {
-        gap: 20px;
+        gap: 12px;
+    }
+    
+    .lab-card-header {
+        padding: 8px 16px 0 16px;
+    }
+    
+    .lab-card-description {
+        padding: 4px 16px 0 16px;
+    }
+    
+    .lab-card-meta {
+        padding: 0 16px;
+    }
+    
+    .lab-card-link {
+        margin-left: 16px;
+        margin-right: 16px;
+        margin-bottom: 16px;
+        max-width: calc(100% - 32px);
     }
     
     .logo-tabs-container {
@@ -983,6 +1073,8 @@ img {
         border-radius: 9999px;
         flex-shrink: 0;
         min-width: fit-content;
+        transform: scale(0.9);
+        transform-origin: center;
     }
     
     .tab-item {
@@ -1043,9 +1135,14 @@ img {
     
     .portfolio {
         padding: 0;
-        padding-right: 16px;
-        padding-top: 16px;
-        padding-bottom: 8px;
+        padding-right: 8px;
+        padding-top: 8px;
+        padding-bottom: 16px;
+    }
+    
+    .lab-panel {
+        padding-top: 8px;
+        padding-bottom: 16px;
     }
     
     .portfolio-item {
@@ -1057,10 +1154,14 @@ img {
     
     .portfolio-grid {
         gap: 6px;
+        margin-left: 0;
+        margin-right: 0;
+        max-width: 100%;
     }
     
     .testimonial-text {
         font-size: 11px;
+        color: rgba(102, 102, 102, 0.7);
     }
     
     .copyright {
@@ -1078,16 +1179,59 @@ img {
     
     .main-content {
         padding-right: 0;
+        padding-bottom: 0;
+    }
+    
+    .lab-panel {
+        padding-bottom: 16px;
     }
     
     .sidebar-content {
-        gap: 20px;
+        gap: 12px;
         padding-top: 0;
-        min-height: calc(100vh - 16px);
+        min-height: auto;
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+    
+    .sidebar-footer {
+        margin-top: 0;
+        margin-bottom: 16px;
+        margin-left: 12px;
+        margin-right: 8px;
     }
     
     .logo-section {
-        gap: 16px;
+        gap: 10px;
+    }
+    
+    .lab-card-header {
+        padding: 8px 12px 0 12px;
+        gap: 8px;
+    }
+    
+    .lab-card-description {
+        padding: 4px 12px 0 12px;
+    }
+    
+    .lab-card-meta {
+        padding: 0 12px;
+    }
+    
+    .lab-card-link {
+        margin-left: 12px;
+        margin-right: 12px;
+        margin-bottom: 16px;
+        max-width: calc(100% - 24px);
+    }
+    
+    .lab-card-title {
+        font-size: 18px;
+    }
+    
+    .lab-card-link.btn-secondary {
+        padding: 8px 14px;
+        font-size: 13px;
     }
     
     .logo-tabs-container {
@@ -1102,6 +1246,8 @@ img {
         border-radius: 9999px;
         flex-shrink: 0;
         min-width: fit-content;
+        transform: scale(0.85);
+        transform-origin: center;
     }
     
     .tab-item {
@@ -1171,9 +1317,14 @@ img {
     
     .portfolio {
         padding: 0;
-        padding-right: 16px;
-        padding-top: 16px;
-        padding-bottom: 8px;
+        padding-right: 8px;
+        padding-top: 0;
+        padding-bottom: 16px;
+    }
+    
+    .lab-panel {
+        padding-top: 0;
+        padding-bottom: 16px;
     }
     
     .portfolio-item {
@@ -1183,6 +1334,9 @@ img {
     
     .portfolio-grid {
         gap: 6px;
+        margin-left: 0;
+        margin-right: 0;
+        max-width: 100%;
     }
     
     .portfolio-label {
@@ -1195,6 +1349,7 @@ img {
     .testimonial-text {
         font-size: 11px;
         line-height: 1.5;
+        color: rgba(102, 102, 102, 0.7);
     }
     
     .copyright {
