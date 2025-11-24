@@ -99,14 +99,36 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+    // AI Chat button click handler
+    const aiChatBtn = document.getElementById('ai-chat-btn');
+    if (aiChatBtn) {
+        aiChatBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            // Wait for Sonner to load, then show toast
+            setTimeout(function() {
+                // Try different ways Sonner might be exposed
+                if (typeof window.toast !== 'undefined') {
+                    window.toast('Coming soon.');
+                } else if (typeof toast !== 'undefined') {
+                    toast('Coming soon.');
+                } else if (typeof window.sonner !== 'undefined' && typeof window.sonner.toast !== 'undefined') {
+                    window.sonner.toast('Coming soon.');
+                } else {
+                    // Fallback to alert if Sonner is not loaded
+                    alert('Coming soon.');
+                }
+            }, 100);
+        });
+    }
+
     // Button click handlers
     const buttons = document.querySelectorAll('.btn-primary, .btn-secondary');
     buttons.forEach(button => {
         button.addEventListener('click', function(e) {
             const buttonText = this.textContent.trim();
             
-            if (buttonText === 'Chat' || this.classList.contains('btn-chat')) {
-                // Telegram link is already in HTML, so no need for additional handling
+            if (buttonText === 'Chat' || (this.classList.contains('btn-chat') && this.id !== 'ai-chat-btn')) {
+                // Other chat buttons - no special handling needed
                 console.log('Chat button clicked');
             } else if (buttonText === 'Book an intro call') {
                 // Add booking functionality here
@@ -167,7 +189,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Update button for Studio tab
                     if (bookButton) {
                         bookButton.textContent = 'Book an intro call';
-                        bookButton.href = 'https://cal.com/sametozkale/meetwithme';
+                        bookButton.href = 'https://cal.com/sametozkale/oberyon-intro-call';
                         bookButton.setAttribute('aria-label', 'Book an intro call');
                     }
                     
@@ -203,7 +225,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Update button for Lab tab
                     if (bookButton) {
                         bookButton.textContent = 'Join us';
-                        bookButton.href = 'https://cal.com/sametozkale/work-with-us';
+                        bookButton.href = 'https://cal.com/sametozkale/oberyon-join-us';
                         bookButton.setAttribute('aria-label', 'Work with us');
                     }
                     
