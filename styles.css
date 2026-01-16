@@ -560,8 +560,22 @@ img {
     width: 48px;
     height: 48px;
     border-radius: 12px;
-    object-fit: cover;
+    object-fit: contain;
     background: #F4F4EE;
+    padding: 4px;
+}
+
+.lab-card-header img[src*="meyn.png"] {
+    object-fit: contain;
+    padding: 6px;
+}
+
+.lab-card-header svg.lab-card-logo,
+.lab-card-header svg[width="48"] {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    flex-shrink: 0;
 }
 
 .lab-card-logo-placeholder {
@@ -802,6 +816,11 @@ img {
     height: 12px;
     object-fit: contain;
     border-radius: 2px;
+}
+
+.portfolio-label svg {
+    min-width: 12px;
+    min-height: 12px;
 }
 
 .portfolio-scope {

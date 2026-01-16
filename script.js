@@ -6,6 +6,100 @@ document.addEventListener('DOMContentLoaded', function() {
         mainContent.scrollTop = 0;
     }
     
+    // Handle broken logo images with fallback
+    function createLogoFallback(img, companyName) {
+        // Create a simple SVG placeholder
+        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.setAttribute('width', img.width || '12');
+        svg.setAttribute('height', img.height || '12');
+        svg.setAttribute('viewBox', '0 0 48 48');
+        svg.style.borderRadius = '4px';
+        
+        // Create background circle/rectangle
+        const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        rect.setAttribute('width', '48');
+        rect.setAttribute('height', '48');
+        rect.setAttribute('fill', '#F4F4EE');
+        rect.setAttribute('rx', '4');
+        svg.appendChild(rect);
+        
+        // Create text with first letter(s) of company name
+        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        const initials = companyName ? companyName.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase() : '?';
+        text.setAttribute('x', '24');
+        text.setAttribute('y', '32');
+        text.setAttribute('text-anchor', 'middle');
+        text.setAttribute('font-family', 'Inter, sans-serif');
+        text.setAttribute('font-size', '16');
+        text.setAttribute('font-weight', '600');
+        text.setAttribute('fill', '#073040');
+        text.textContent = initials;
+        svg.appendChild(text);
+        
+        return svg;
+    }
+    
+    // Setup logo error handlers
+    function setupLogoFallbacks() {
+        // Portfolio label icons
+        const portfolioLogos = document.querySelectorAll('.portfolio-label-icon');
+        portfolioLogos.forEach(img => {
+            img.addEventListener('error', function() {
+                if (this.dataset.fallbackApplied) return;
+                this.dataset.fallbackApplied = 'true';
+                
+                const parentLink = this.closest('.portfolio-label');
+                const companyName = parentLink ? parentLink.textContent.trim() : '';
+                const fallback = createLogoFallback(this, companyName);
+                fallback.setAttribute('class', 'portfolio-label-icon');
+                this.style.display = 'none';
+                parentLink.insertBefore(fallback, this);
+            }, { once: true });
+            
+            // Also check if image fails to load after a timeout
+            setTimeout(() => {
+                if (!this.complete || this.naturalWidth === 0) {
+                    if (!this.dataset.fallbackApplied) {
+                        this.dispatchEvent(new Event('error'));
+                    }
+                }
+            }, 3000);
+        });
+        
+        // Lab card logos
+        const labCardLogos = document.querySelectorAll('.lab-card-logo');
+        labCardLogos.forEach(img => {
+            img.addEventListener('error', function() {
+                if (this.dataset.fallbackApplied) return;
+                this.dataset.fallbackApplied = 'true';
+                
+                const cardHeader = this.closest('.lab-card-header');
+                const cardTitle = cardHeader ? cardHeader.querySelector('.lab-card-title') : null;
+                const companyName = cardTitle ? cardTitle.textContent.trim() : '';
+                const fallback = createLogoFallback(this, companyName);
+                fallback.setAttribute('width', '48');
+                fallback.setAttribute('height', '48');
+                fallback.setAttribute('viewBox', '0 0 48 48');
+                fallback.setAttribute('class', 'lab-card-logo');
+                fallback.style.borderRadius = '12px';
+                this.style.display = 'none';
+                this.parentNode.insertBefore(fallback, this);
+            }, { once: true });
+            
+            // Also check if image fails to load after a timeout
+            setTimeout(() => {
+                if (!this.complete || this.naturalWidth === 0) {
+                    if (!this.dataset.fallbackApplied) {
+                        this.dispatchEvent(new Event('error'));
+                    }
+                }
+            }, 3000);
+        });
+    }
+    
+    // Setup logo fallbacks
+    setupLogoFallbacks();
+    
     // Sync gradient banner height with image banner height
     function syncBannerHeights() {
         const imageBanner = document.querySelector('.lab-card-banner-image');
@@ -45,13 +139,73 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
+    // Sync Meyn banner height with Mues banner height (exact same dimensions)
+    function syncMeynBannerWithMues() {
+        const muesBannerContainer = document.querySelector('.lab-card:first-child .lab-card-banner');
+        const meynBannerContainer = document.querySelector('.lab-card:last-child .lab-card-banner');
+        const muesBannerImage = document.querySelector('.lab-card:first-child .lab-card-banner-image');
+        const meynBannerImage = document.querySelector('.lab-card:last-child .lab-card-banner-image');
+        
+        if (muesBannerContainer && meynBannerContainer && muesBannerImage && meynBannerImage) {
+            const updateMeynHeight = () => {
+                // Get the computed height of Mues banner container
+                const muesHeight = muesBannerContainer.offsetHeight;
+                
+                // Also get computed width for consistency
+                const muesWidth = muesBannerContainer.offsetWidth;
+                
+                if (muesHeight > 0) {
+                    // Set Meyn banner container to exact same dimensions
+                    meynBannerContainer.style.height = muesHeight + 'px';
+                    meynBannerContainer.style.width = muesWidth + 'px';
+                    meynBannerContainer.style.overflow = 'hidden';
+                    
+                    // Make sure banner image fills the container
+                    meynBannerImage.style.width = '100%';
+                    meynBannerImage.style.height = '100%';
+                    meynBannerImage.style.objectFit = 'cover';
+                    meynBannerImage.style.objectPosition = 'center';
+                }
+            };
+            
+            // Update when both images are loaded
+            const updateWhenReady = () => {
+                if (muesBannerImage.complete && meynBannerImage.complete) {
+                    // Wait a bit for layout to settle
+                    setTimeout(updateMeynHeight, 50);
+                }
+            };
+            
+            // Check if images are already loaded
+            if (muesBannerImage.complete && meynBannerImage.complete) {
+                updateMeynHeight();
+            } else {
+                muesBannerImage.addEventListener('load', updateWhenReady, { once: true });
+                meynBannerImage.addEventListener('load', updateWhenReady, { once: true });
+            }
+            
+            // Also update after a delay to ensure layout is complete
+            setTimeout(updateMeynHeight, 100);
+        }
+    }
+    
     // Sync heights on load, after images load, and on resize
     syncBannerHeights();
-    window.addEventListener('load', syncBannerHeights);
-    window.addEventListener('resize', syncBannerHeights);
+    syncMeynBannerWithMues();
+    window.addEventListener('load', function() {
+        syncBannerHeights();
+        syncMeynBannerWithMues();
+    });
+    window.addEventListener('resize', function() {
+        syncBannerHeights();
+        syncMeynBannerWithMues();
+    });
     
     // Also sync after DOM is fully ready
-    setTimeout(syncBannerHeights, 500);
+    setTimeout(function() {
+        syncBannerHeights();
+        syncMeynBannerWithMues();
+    }, 500);
     // Intersection Observer for fade-in animations
     const observerOptions = {
         threshold: 0.1,
@@ -99,38 +253,13 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // AI Chat button click handler
-    const aiChatBtn = document.getElementById('ai-chat-btn');
-    if (aiChatBtn) {
-        aiChatBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            // Wait for Sonner to load, then show toast
-            setTimeout(function() {
-                // Try different ways Sonner might be exposed
-                if (typeof window.toast !== 'undefined') {
-                    window.toast('Coming soon.');
-                } else if (typeof toast !== 'undefined') {
-                    toast('Coming soon.');
-                } else if (typeof window.sonner !== 'undefined' && typeof window.sonner.toast !== 'undefined') {
-                    window.sonner.toast('Coming soon.');
-                } else {
-                    // Fallback to alert if Sonner is not loaded
-                    alert('Coming soon.');
-                }
-            }, 100);
-        });
-    }
-
     // Button click handlers
     const buttons = document.querySelectorAll('.btn-primary, .btn-secondary');
     buttons.forEach(button => {
         button.addEventListener('click', function(e) {
             const buttonText = this.textContent.trim();
             
-            if (buttonText === 'Chat' || (this.classList.contains('btn-chat') && this.id !== 'ai-chat-btn')) {
-                // Other chat buttons - no special handling needed
-                console.log('Chat button clicked');
-            } else if (buttonText === 'Book an intro call') {
+            if (buttonText === 'Book an intro call') {
                 // Add booking functionality here
                 console.log('Book an intro call button clicked');
                 // Could open a modal or navigate to a booking page
@@ -197,11 +326,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (skillsetTitle && skillsetList) {
                         skillsetTitle.textContent = 'Skillset';
                         skillsetList.innerHTML = `
-                            <li>Product design</li>
+                            <li>Digital product design</li>
                             <li>Web design</li>
+                            <li>App design</li>
                             <li>Design systems</li>
-                            <li>AI strategy</li>
-                            <li>Product management</li>
+                            <li>Vibe coding</li>
                         `;
                     }
                     
