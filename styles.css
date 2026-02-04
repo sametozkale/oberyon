@@ -189,10 +189,50 @@ img {
 
 .hero-buttons {
     display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 0;
+    align-items: flex-start;
+}
+
+.hero-buttons-row {
+    display: flex;
     flex-direction: row;
     gap: 8px;
-    margin-top: 0;
     align-items: center;
+}
+
+.btn-white {
+    background-color: #ffffff;
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+}
+
+.btn-white:hover,
+.btn-white:focus-visible {
+    background-color: #ffffff;
+    border-color: #ccc;
+    transform: translateY(-1px);
+    outline: none;
+}
+
+.btn-white:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+.btn-secondary.btn-white:hover,
+.btn-secondary.btn-white:focus-visible {
+    border-color: #ccc;
+    transform: translateY(-1px);
+}
+
+.hero-booking-stats {
+    font-size: 12px;
+    color: #999;
+    margin: 0;
+    padding: 0;
+    line-height: 1.5;
 }
 
 /* Buttons */
@@ -239,8 +279,8 @@ img {
 }
 
 .btn-secondary {
-    background-color: transparent;
-    color: var(--text-color);
+    background-color: rgba(255, 255, 255, 1);
+    color: rgba(0, 0, 0, 1);
     border: 1px solid var(--border-color);
 }
 
@@ -414,6 +454,10 @@ img {
 }
 
 .sidebar-content[data-current-tab="lab"] .award-badge {
+    display: none;
+}
+
+.sidebar-content[data-current-tab="lab"] .hero-booking-stats {
     display: none;
 }
 
@@ -1152,6 +1196,11 @@ img {
     
     .hero-buttons {
         flex-direction: row;
+        gap: 12px;
+    }
+    
+    .hero-buttons-row {
+        flex-direction: row;
         gap: 8px;
     }
     
@@ -1333,7 +1382,13 @@ img {
     
     .hero-buttons {
         flex-direction: column;
+        gap: 12px;
+    }
+    
+    .hero-buttons-row {
+        flex-direction: column;
         gap: 8px;
+        width: 100%;
     }
     
     .btn-primary,
