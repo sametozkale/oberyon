@@ -100,6 +100,82 @@ document.addEventListener('DOMContentLoaded', function() {
     // Setup logo fallbacks
     setupLogoFallbacks();
     
+    // Trusted Logos Slider Animation - Commented out for future use
+    /*
+    function initTrustedLogosSlider() {
+        const wrapper = document.querySelector('.trusted-logos-wrapper');
+        const container = document.querySelector('.trusted-logos-container');
+        const logoItems = document.querySelectorAll('.trusted-logo-item');
+        
+        if (!wrapper || logoItems.length === 0) return;
+        
+        let scrollPosition = 0;
+        const scrollSpeed = 0.3; // pixels per frame
+        let isPaused = false;
+        let animationFrameId = null;
+        
+        // Calculate the width of one set of logos
+        const firstSetLogos = Array.from(logoItems).slice(0, 8);
+        let logoSetWidth = 0;
+        
+        function calculateLogoSetWidth() {
+            logoSetWidth = firstSetLogos.reduce((sum, item) => {
+                return sum + (item.offsetWidth || 60) + 32; // 32px is the gap
+            }, 0);
+        }
+        
+        // Initial calculation
+        calculateLogoSetWidth();
+        
+        // Recalculate on resize
+        window.addEventListener('resize', calculateLogoSetWidth);
+        
+        function scroll() {
+            if (!isPaused) {
+                scrollPosition += scrollSpeed;
+                // Reset position when we've scrolled one full set
+                if (scrollPosition >= logoSetWidth) {
+                    scrollPosition = 0;
+                }
+                wrapper.style.transform = `translateX(-${scrollPosition}px)`;
+            }
+            animationFrameId = requestAnimationFrame(scroll);
+        }
+        
+        // Pause on hover
+        if (container) {
+            container.addEventListener('mouseenter', () => {
+                isPaused = true;
+            });
+            
+            container.addEventListener('mouseleave', () => {
+                isPaused = false;
+            });
+        }
+        
+        // Start animation
+        scroll();
+        
+        // Cleanup function
+        return function cleanup() {
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+            }
+            window.removeEventListener('resize', calculateLogoSetWidth);
+        };
+    }
+    
+    // Initialize slider after DOM is ready
+    let sliderCleanup = null;
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function() {
+            sliderCleanup = initTrustedLogosSlider();
+        });
+    } else {
+        sliderCleanup = initTrustedLogosSlider();
+    }
+    */
+    
     // Sync gradient banner height with image banner height
     function syncBannerHeights() {
         const imageBanner = document.querySelector('.lab-card-banner-image');
