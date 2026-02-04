@@ -81,7 +81,7 @@ img {
 .logo-section {
     display: flex;
     flex-direction: column;
-    gap: 32px;
+    gap: 40px;
     align-items: flex-start;
 }
 
@@ -175,7 +175,7 @@ img {
     font-family: 'General Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     font-size: 24px;
     font-weight: 500;
-    line-height: 1.2;
+    line-height: 32px;
     letter-spacing: -0.5px;
     text-wrap: balance;
     color: #073040;
