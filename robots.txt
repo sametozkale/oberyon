@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Allow: /llms.txt
+
+# Keep infrastructure and dependency folders out of indexing.
+Disallow: /node_modules/
+Disallow: /index_original.html
+
+Sitemap: https://oberyon.com/sitemap.xml

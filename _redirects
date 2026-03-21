@@ -1,0 +1,2 @@
+# Ensure unknown routes resolve to the custom 404 page with correct status.
+/* /404.html 404

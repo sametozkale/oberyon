@@ -1,0 +1,16 @@
+{
+  "name": "Oberyon",
+  "short_name": "Oberyon",
+  "description": "Product design partner for founders and startups.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#073040",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
