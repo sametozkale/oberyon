@@ -45,8 +45,16 @@ document.addEventListener('DOMContentLoaded', function() {
         const portfolioLogos = document.querySelectorAll('.portfolio-label-icon');
         portfolioLogos.forEach(img => {
             img.addEventListener('error', function() {
-                if (this.dataset.fallbackApplied) return;
-                this.dataset.fallbackApplied = 'true';
+                if (!this) return;
+                const fallbackApplied = this.dataset
+                    ? this.dataset.fallbackApplied
+                    : this.getAttribute('data-fallback-applied');
+                if (fallbackApplied) return;
+                if (this.dataset) {
+                    this.dataset.fallbackApplied = 'true';
+                } else {
+                    this.setAttribute('data-fallback-applied', 'true');
+                }
                 
                 const parentLink = this.closest('.portfolio-label');
                 const companyName = parentLink ? parentLink.textContent.trim() : '';
@@ -58,8 +66,12 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Also check if image fails to load after a timeout
             setTimeout(() => {
+                if (!img || typeof img.dispatchEvent !== 'function') return;
                 if (!img.complete || img.naturalWidth === 0) {
-                    if (!img.dataset.fallbackApplied) {
+                    const fallbackApplied = img.dataset
+                        ? img.dataset.fallbackApplied
+                        : img.getAttribute('data-fallback-applied');
+                    if (!fallbackApplied) {
                         img.dispatchEvent(new Event('error'));
                     }
                 }
@@ -70,8 +82,16 @@ document.addEventListener('DOMContentLoaded', function() {
         const labCardLogos = document.querySelectorAll('.lab-card-logo');
         labCardLogos.forEach(img => {
             img.addEventListener('error', function() {
-                if (this.dataset.fallbackApplied) return;
-                this.dataset.fallbackApplied = 'true';
+                if (!this) return;
+                const fallbackApplied = this.dataset
+                    ? this.dataset.fallbackApplied
+                    : this.getAttribute('data-fallback-applied');
+                if (fallbackApplied) return;
+                if (this.dataset) {
+                    this.dataset.fallbackApplied = 'true';
+                } else {
+                    this.setAttribute('data-fallback-applied', 'true');
+                }
                 
                 const cardHeader = this.closest('.lab-card-header');
                 const cardTitle = cardHeader ? cardHeader.querySelector('.lab-card-title') : null;
@@ -88,8 +108,12 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Also check if image fails to load after a timeout
             setTimeout(() => {
+                if (!img || typeof img.dispatchEvent !== 'function') return;
                 if (!img.complete || img.naturalWidth === 0) {
-                    if (!img.dataset.fallbackApplied) {
+                    const fallbackApplied = img.dataset
+                        ? img.dataset.fallbackApplied
+                        : img.getAttribute('data-fallback-applied');
+                    if (!fallbackApplied) {
                         img.dispatchEvent(new Event('error'));
                     }
                 }
