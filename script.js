@@ -58,9 +58,9 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Also check if image fails to load after a timeout
             setTimeout(() => {
-                if (!this.complete || this.naturalWidth === 0) {
-                    if (!this.dataset.fallbackApplied) {
-                        this.dispatchEvent(new Event('error'));
+                if (!img.complete || img.naturalWidth === 0) {
+                    if (!img.dataset.fallbackApplied) {
+                        img.dispatchEvent(new Event('error'));
                     }
                 }
             }, 3000);
@@ -88,9 +88,9 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Also check if image fails to load after a timeout
             setTimeout(() => {
-                if (!this.complete || this.naturalWidth === 0) {
-                    if (!this.dataset.fallbackApplied) {
-                        this.dispatchEvent(new Event('error'));
+                if (!img.complete || img.naturalWidth === 0) {
+                    if (!img.dataset.fallbackApplied) {
+                        img.dispatchEvent(new Event('error'));
                     }
                 }
             }, 3000);
@@ -99,6 +99,130 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Setup logo fallbacks
     setupLogoFallbacks();
+
+    // Intro modal (shows 10 seconds after page load)
+    const introModalOverlay = document.getElementById('introModalOverlay');
+    const introModalClose = document.getElementById('introModalClose');
+    const introModalLabel = document.querySelector('.intro-modal-label');
+    const introModalTitle = document.getElementById('introModalTitle');
+    const introModalDescription = document.querySelector('.intro-modal-description');
+    let introModalOpen = false;
+    let typingTimers = [];
+    let introModalOpenTimerId = null;
+
+    const introLabelText = introModalLabel ? introModalLabel.textContent.trim() : '';
+    const introTitleText = introModalTitle ? introModalTitle.textContent.trim() : '';
+    const introDescriptionParts = introModalDescription
+        ? introModalDescription.innerHTML
+            .split(/<br\s*\/?>/i)
+            .map(part => part.trim())
+            .filter(Boolean)
+        : [];
+
+    function clearTypingTimers() {
+        typingTimers.forEach(timerId => clearTimeout(timerId));
+        typingTimers = [];
+    }
+
+    function typeText(element, text, speed, onComplete) {
+        if (!element) {
+            if (onComplete) onComplete();
+            return;
+        }
+
+        element.textContent = '';
+        let index = 0;
+
+        function step() {
+            if (index < text.length) {
+                element.textContent += text.charAt(index);
+                index += 1;
+                const timerId = setTimeout(step, speed);
+                typingTimers.push(timerId);
+            } else if (onComplete) {
+                onComplete();
+            }
+        }
+
+        step();
+    }
+
+    function runIntroTypingAnimation() {
+        if (!introModalLabel || !introModalTitle || !introModalDescription) return;
+
+        clearTypingTimers();
+        introModalLabel.textContent = '';
+        introModalTitle.textContent = '';
+        introModalDescription.textContent = '';
+
+        typeText(introModalLabel, introLabelText, 26, function() {
+            typeText(introModalTitle, introTitleText, 34, function() {
+                let paragraphIndex = 0;
+
+                function typeNextParagraph() {
+                    if (paragraphIndex >= introDescriptionParts.length) return;
+
+                    const span = document.createElement('span');
+                    introModalDescription.appendChild(span);
+                    typeText(span, introDescriptionParts[paragraphIndex], 22, function() {
+                        paragraphIndex += 1;
+
+                        if (paragraphIndex < introDescriptionParts.length) {
+                            const paragraphBreak = document.createElement('span');
+                            paragraphBreak.className = 'intro-modal-break';
+                            paragraphBreak.setAttribute('aria-hidden', 'true');
+                            introModalDescription.appendChild(paragraphBreak);
+                            typeNextParagraph();
+                        }
+                    });
+                }
+
+                typeNextParagraph();
+            });
+        });
+    }
+
+    function openIntroModal() {
+        if (!introModalOverlay || introModalOpen) return;
+        if (introModalOpenTimerId) {
+            clearTimeout(introModalOpenTimerId);
+            introModalOpenTimerId = null;
+        }
+        introModalOverlay.classList.add('is-open');
+        introModalOverlay.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+        introModalOpen = true;
+        runIntroTypingAnimation();
+    }
+
+    function closeIntroModal() {
+        if (!introModalOverlay || !introModalOpen) return;
+        introModalOverlay.classList.remove('is-open');
+        introModalOverlay.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+        introModalOpen = false;
+        clearTypingTimers();
+    }
+
+    if (introModalClose) {
+        introModalClose.addEventListener('click', closeIntroModal);
+    }
+
+    if (introModalOverlay) {
+        introModalOverlay.addEventListener('click', function (event) {
+            if (event.target === introModalOverlay) {
+                closeIntroModal();
+            }
+        });
+    }
+
+    document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape' && introModalOpen) {
+            closeIntroModal();
+        }
+    });
+
+    introModalOpenTimerId = setTimeout(openIntroModal, 10000);
     
     // Trusted Logos Slider Animation - Commented out for future use
     /*
@@ -335,9 +459,9 @@ document.addEventListener('DOMContentLoaded', function() {
         button.addEventListener('click', function(e) {
             const buttonText = this.textContent.trim();
             
-            if (buttonText === 'Book an intro call') {
+            if (buttonText === 'Schedule a meeting') {
                 // Add booking functionality here
-                console.log('Book an intro call button clicked');
+                console.log('Schedule a meeting button clicked');
                 // Could open a modal or navigate to a booking page
             }
         });
@@ -393,9 +517,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     
                     // Update button for Studio tab
                     if (bookButton) {
-                        bookButton.textContent = 'Book an intro call';
+                        bookButton.textContent = 'Schedule a meeting';
                         bookButton.href = 'https://cal.com/sametozkale/oberyon-intro-call';
-                        bookButton.setAttribute('aria-label', 'Book an intro call');
+                        bookButton.setAttribute('aria-label', 'Schedule a meeting');
                     }
                     
                     // Update Skillset section for Studio tab
@@ -468,8 +592,11 @@ document.addEventListener('DOMContentLoaded', function() {
 // Keyboard navigation support
 document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
-        // Close any modals or overlays if needed
-        console.log('Escape pressed');
+        const introModalOverlay = document.getElementById('introModalOverlay');
+        if (introModalOverlay && introModalOverlay.classList.contains('is-open')) {
+            introModalOverlay.classList.remove('is-open');
+            introModalOverlay.setAttribute('aria-hidden', 'true');
+        }
     }
     
     // Allow keyboard navigation for portfolio items
