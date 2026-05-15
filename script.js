@@ -39,41 +39,119 @@ document.addEventListener('DOMContentLoaded', function() {
         return svg;
     }
     
+    function removePortfolioLabelLogo(img) {
+        const parentLink = img.closest('.portfolio-label');
+        if (!parentLink) return;
+
+        const logoRemoved = img.dataset
+            ? img.dataset.logoRemoved
+            : img.getAttribute('data-logo-removed');
+        if (logoRemoved) return;
+
+        if (img.dataset) {
+            img.dataset.logoRemoved = 'true';
+        } else {
+            img.setAttribute('data-logo-removed', 'true');
+        }
+
+        img.remove();
+        parentLink.classList.add('portfolio-label--text-only');
+    }
+
+    function getPortfolioFaviconCandidates(href) {
+        const url = new URL(href);
+        const domain = url.hostname.replace(/^www\./, '');
+
+        return [
+            `https://img.logo.dev/${domain}?token=pk_ZEzq3CwgSRiCk2Od_jlvBg`,
+            `https://www.google.com/s2/favicons?domain=${domain}&sz=64`,
+            `https://icon.horse/icon/${domain}`,
+            `${url.origin}/favicon.ico`
+        ];
+    }
+
+    function handlePortfolioLogoFailure(img) {
+        if (!img || !img.isConnected) return;
+
+        const logoRemoved = img.dataset
+            ? img.dataset.logoRemoved
+            : img.getAttribute('data-logo-removed');
+        if (logoRemoved) return;
+
+        const parentLink = img.closest('.portfolio-label');
+        if (!parentLink || !parentLink.href) {
+            removePortfolioLabelLogo(img);
+            return;
+        }
+
+        if (!img.dataset?.originalSrc && !img.getAttribute('data-original-src')) {
+            if (img.dataset) {
+                img.dataset.originalSrc = img.currentSrc || img.src;
+            } else {
+                img.setAttribute('data-original-src', img.currentSrc || img.src);
+            }
+        }
+
+        let faviconAttempt = 0;
+        if (img.dataset?.faviconAttempt) {
+            faviconAttempt = parseInt(img.dataset.faviconAttempt, 10);
+        } else if (img.getAttribute('data-favicon-attempt')) {
+            faviconAttempt = parseInt(img.getAttribute('data-favicon-attempt'), 10);
+        }
+
+        let candidates = [];
+        try {
+            candidates = getPortfolioFaviconCandidates(parentLink.href);
+        } catch (error) {
+            candidates = [];
+        }
+
+        while (faviconAttempt < candidates.length) {
+            const nextSrc = candidates[faviconAttempt];
+            faviconAttempt += 1;
+
+            if (img.dataset) {
+                img.dataset.faviconAttempt = String(faviconAttempt);
+            } else {
+                img.setAttribute('data-favicon-attempt', String(faviconAttempt));
+            }
+
+            const currentSrc = img.currentSrc || img.src;
+            if (nextSrc === currentSrc) {
+                continue;
+            }
+
+            img.src = nextSrc;
+            return;
+        }
+
+        removePortfolioLabelLogo(img);
+    }
+
     // Setup logo error handlers
     function setupLogoFallbacks() {
         // Portfolio label icons
         const portfolioLogos = document.querySelectorAll('.portfolio-label-icon');
         portfolioLogos.forEach(img => {
             img.addEventListener('error', function() {
-                if (!this) return;
-                const fallbackApplied = this.dataset
-                    ? this.dataset.fallbackApplied
-                    : this.getAttribute('data-fallback-applied');
-                if (fallbackApplied) return;
-                if (this.dataset) {
-                    this.dataset.fallbackApplied = 'true';
-                } else {
-                    this.setAttribute('data-fallback-applied', 'true');
+                handlePortfolioLogoFailure(this);
+            });
+
+            img.addEventListener('load', function() {
+                if (this.naturalWidth === 0 || this.naturalHeight === 0) {
+                    handlePortfolioLogoFailure(this);
                 }
-                
-                const parentLink = this.closest('.portfolio-label');
-                const companyName = parentLink ? parentLink.textContent.trim() : '';
-                const fallback = createLogoFallback(this, companyName);
-                fallback.setAttribute('class', 'portfolio-label-icon');
-                this.style.display = 'none';
-                parentLink.insertBefore(fallback, this);
-            }, { once: true });
-            
+            });
+
             // Also check if image fails to load after a timeout
             setTimeout(() => {
-                if (!img || typeof img.dispatchEvent !== 'function') return;
+                if (!img || !img.isConnected || typeof img.dispatchEvent !== 'function') return;
+                const logoRemoved = img.dataset
+                    ? img.dataset.logoRemoved
+                    : img.getAttribute('data-logo-removed');
+                if (logoRemoved) return;
                 if (!img.complete || img.naturalWidth === 0) {
-                    const fallbackApplied = img.dataset
-                        ? img.dataset.fallbackApplied
-                        : img.getAttribute('data-fallback-applied');
-                    if (!fallbackApplied) {
-                        img.dispatchEvent(new Event('error'));
-                    }
+                    img.dispatchEvent(new Event('error'));
                 }
             }, 3000);
         });
@@ -127,84 +205,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Intro modal (shows 10 seconds after page load)
     const introModalOverlay = document.getElementById('introModalOverlay');
     const introModalClose = document.getElementById('introModalClose');
-    const introModalLabel = document.querySelector('.intro-modal-label');
-    const introModalTitle = document.getElementById('introModalTitle');
-    const introModalDescription = document.querySelector('.intro-modal-description');
     let introModalOpen = false;
-    let typingTimers = [];
     let introModalOpenTimerId = null;
-
-    const introLabelText = introModalLabel ? introModalLabel.textContent.trim() : '';
-    const introTitleText = introModalTitle ? introModalTitle.textContent.trim() : '';
-    const introDescriptionParts = introModalDescription
-        ? introModalDescription.innerHTML
-            .split(/<br\s*\/?>/i)
-            .map(part => part.trim())
-            .filter(Boolean)
-        : [];
-
-    function clearTypingTimers() {
-        typingTimers.forEach(timerId => clearTimeout(timerId));
-        typingTimers = [];
-    }
-
-    function typeText(element, text, speed, onComplete) {
-        if (!element) {
-            if (onComplete) onComplete();
-            return;
-        }
-
-        element.textContent = '';
-        let index = 0;
-
-        function step() {
-            if (index < text.length) {
-                element.textContent += text.charAt(index);
-                index += 1;
-                const timerId = setTimeout(step, speed);
-                typingTimers.push(timerId);
-            } else if (onComplete) {
-                onComplete();
-            }
-        }
-
-        step();
-    }
-
-    function runIntroTypingAnimation() {
-        if (!introModalLabel || !introModalTitle || !introModalDescription) return;
-
-        clearTypingTimers();
-        introModalLabel.textContent = '';
-        introModalTitle.textContent = '';
-        introModalDescription.textContent = '';
-
-        typeText(introModalLabel, introLabelText, 26, function() {
-            typeText(introModalTitle, introTitleText, 34, function() {
-                let paragraphIndex = 0;
-
-                function typeNextParagraph() {
-                    if (paragraphIndex >= introDescriptionParts.length) return;
-
-                    const span = document.createElement('span');
-                    introModalDescription.appendChild(span);
-                    typeText(span, introDescriptionParts[paragraphIndex], 22, function() {
-                        paragraphIndex += 1;
-
-                        if (paragraphIndex < introDescriptionParts.length) {
-                            const paragraphBreak = document.createElement('span');
-                            paragraphBreak.className = 'intro-modal-break';
-                            paragraphBreak.setAttribute('aria-hidden', 'true');
-                            introModalDescription.appendChild(paragraphBreak);
-                            typeNextParagraph();
-                        }
-                    });
-                }
-
-                typeNextParagraph();
-            });
-        });
-    }
 
     function openIntroModal() {
         if (!introModalOverlay || introModalOpen) return;
@@ -216,7 +218,6 @@ document.addEventListener('DOMContentLoaded', function() {
         introModalOverlay.setAttribute('aria-hidden', 'false');
         document.body.style.overflow = 'hidden';
         introModalOpen = true;
-        runIntroTypingAnimation();
     }
 
     function closeIntroModal() {
@@ -225,7 +226,6 @@ document.addEventListener('DOMContentLoaded', function() {
         introModalOverlay.setAttribute('aria-hidden', 'true');
         document.body.style.overflow = '';
         introModalOpen = false;
-        clearTypingTimers();
     }
 
     if (introModalClose) {
@@ -481,15 +481,23 @@ document.addEventListener('DOMContentLoaded', function() {
     const buttons = document.querySelectorAll('.btn-primary, .btn-secondary');
     buttons.forEach(button => {
         button.addEventListener('click', function(e) {
-            const buttonText = this.textContent.trim();
+            const labelEl = this.querySelector(':scope > span');
+            const buttonText = labelEl ? labelEl.textContent.trim() : this.textContent.trim();
             
-            if (buttonText === 'Schedule a meeting') {
-                // Add booking functionality here
-                console.log('Schedule a meeting button clicked');
-                // Could open a modal or navigate to a booking page
+            if (buttonText === 'Book intro call') {
+                console.log('Intro call CTA clicked');
             }
         });
     });
+
+    function createFeatureListItem(iconClass, label) {
+        return `<li><i class="hgi-stroke ${iconClass} feature-list-icon" aria-hidden="true"></i><span>${label}</span></li>`;
+    }
+
+    function setFeatureList(listElement, items) {
+        if (!listElement) return;
+        listElement.innerHTML = items.map(([iconClass, label]) => createFeatureListItem(iconClass, label)).join('');
+    }
 
     // Tabs functionality
     const tabItems = document.querySelectorAll('.tab-item');
@@ -522,7 +530,8 @@ document.addEventListener('DOMContentLoaded', function() {
             // Update hero title and subtitle based on selected tab
             const heroTitle = document.querySelector('.hero-title');
             const heroSubtitle = document.querySelector('.hero-subtitle');
-            const bookButton = document.querySelector('.btn-primary');
+            const bookButton = document.querySelector('.hero-buttons .btn-primary');
+            const bookButtonLabel = bookButton ? bookButton.querySelector(':scope > span') : null;
             
             // Find feature items
             const featureItems = document.querySelectorAll('.feature-item');
@@ -536,26 +545,25 @@ document.addEventListener('DOMContentLoaded', function() {
             
             if (heroTitle && heroSubtitle) {
                 if (tabName === 'studio') {
-                    heroTitle.textContent = 'Design partner for ambitious founders';
-                    heroSubtitle.textContent = 'Oberyon partners with founders and startups to create high-converting, meaningful and purpose-driven design for users.';
+                    heroTitle.textContent = 'From kickoff to handoff intentional designs';
+                    heroSubtitle.textContent = 'We help ambitious founders elevate their visual design. From standout marketing websites to refined product UI, our work focuses on thoughtful execution and a deep care for craft. If that resonates, we\'d love to hear more about what you\'re building.';
                     
                     // Update button for Studio tab
                     if (bookButton) {
-                        bookButton.textContent = 'Schedule a meeting';
+                        if (bookButtonLabel) bookButtonLabel.textContent = 'Book intro call';
                         bookButton.href = 'https://cal.com/sametozkale/oberyon-intro-call';
-                        bookButton.setAttribute('aria-label', 'Schedule a meeting');
+                        bookButton.setAttribute('aria-label', 'Book an intro call');
                     }
                     
                     // Update Skillset section for Studio tab
                     if (skillsetTitle && skillsetList) {
-                        skillsetTitle.textContent = 'Skillset';
-                        skillsetList.innerHTML = `
-                            <li>Digital product design</li>
-                            <li>Web design</li>
-                            <li>App design</li>
-                            <li>Design systems</li>
-                            <li>Vibe coding</li>
-                        `;
+                        skillsetTitle.textContent = 'Services';
+                        setFeatureList(skillsetList, [
+                            ['hgi-pen-tool-02', 'Digital product design'],
+                            ['hgi-browser', 'Web design'],
+                            ['hgi-smart-phone-01', 'App design'],
+                            ['hgi-component', 'Design systems']
+                        ]);
                     }
                     
                     // Update About section for Studio tab
@@ -577,21 +585,19 @@ document.addEventListener('DOMContentLoaded', function() {
                     
                     // Update button for Lab tab
                     if (bookButton) {
-                        bookButton.textContent = 'Join us';
+                        if (bookButtonLabel) bookButtonLabel.textContent = 'Join us';
                         bookButton.href = 'https://cal.com/sametozkale/oberyon-join-us';
                         bookButton.setAttribute('aria-label', 'Work with us');
                     }
                     
                     // Update Looking for section for Lab tab
                     if (skillsetTitle && skillsetList) {
-                        skillsetTitle.textContent = 'Looking for (side-hustle)';
-                        skillsetList.innerHTML = `
-                            <li>AI engineers</li>
-                            <li>GTM engineers</li>
-                            <li>Design engineers</li>
-                            <li>Marketing enthusiasts</li>
-                            <li>Chiefs of staff</li>
-                        `;
+                        skillsetTitle.textContent = 'Looking for';
+                        setFeatureList(skillsetList, [
+                            ['hgi-ai-brain-01', 'AI engineers'],
+                            ['hgi-rocket-01', 'GTM engineers'],
+                            ['hgi-user-group', 'Chiefs of staff']
+                        ]);
                     }
                     
                     // Update Focus section for Lab tab
