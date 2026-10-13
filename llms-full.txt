@@ -1,0 +1,105 @@
+# Oberyon
+
+> Design engineering for startups. The interface, and the code behind it.
+
+Canonical site: https://oberyon.com/
+Language: English
+Founder: Samet Ozkale, https://x.com/sametozkale
+Studio: https://x.com/oberyonstudio
+Intro call: https://cal.com/sametozkale/oberyon-intro-call
+Join us: https://cal.com/sametozkale/oberyon-join-us
+
+In the age of AI, design and taste are the moat. Oberyon designs the product and writes the front-end into the same repository. The work starts from the strategy behind the design, not only the screen.
+
+## Home
+
+https://oberyon.com/
+
+Design engineering for startups. A free discovery, a two-week sprint, a fixed project, or a monthly retainer.
+
+Selected work: https://oberyon.com/#work
+Practice: https://oberyon.com/#practice
+Pricing: https://oberyon.com/#pricing
+Answers: https://oberyon.com/#answers
+
+Samet Ozkale is the founder of Oberyon. He has worked with 30+ startups, shipped more projects than he keeps a count of, received 2 awards, and founded 3 companies. Oberyon is the one he runs.
+
+## Discovery
+
+https://oberyon.com/discovery/
+
+A read of the product. Free. One meeting, one page. Yours to keep.
+
+- No fee, and no obligation.
+- About a week, from the note you send to the page sent back.
+- The page says where to start, the constraint, and which way of working fits.
+- A link to the product is enough to begin.
+
+The 15-minute intro call is not discovery. The call is a first conversation. Discovery is the written read.
+
+## Sprint
+
+https://oberyon.com/sprint/
+
+Two weeks on one surface. Designed, and in the repo. Then it stops.
+
+- Ten working days, Monday to the Friday after next.
+- One surface: a flow, not the whole product.
+- The fee is fixed before day one.
+- You leave with the interface and the front-end in the repository you already ship from, components named the way that repository already names them, and a one-page note of what was decided and what was left out.
+
+## Project
+
+https://oberyon.com/project/
+
+A defined piece, with an end date. The length is chosen before kickoff. The date does not move.
+
+- Four weeks: one flow, from the empty state to the shipped screen.
+- Eight weeks: a surface, and the components that hold it.
+- Twelve weeks: a product area, designed and in the codebase.
+
+## Retainer
+
+https://oberyon.com/retainer/
+
+A seat in the sprint, every week. The same person, on the branch the team already ships.
+
+- Month to month. Either side can stop at the end of a month.
+- Named on Monday, merged by Friday.
+- The repository does not meet a new hand.
+
+Lumen is 3,999 EUR a month. One product surface, from design to the front-end in the repo.
+
+Vertex is 7,999 EUR a month. Every surface, in one system. Prototype, UI, and the code that ships.
+
+## Answers
+
+These are the questions on https://oberyon.com/#answers
+
+### Do you only design, or do you also write the code?
+
+Both. The interface and the front-end land in the same repository, ready to merge. Oberyon does not hand over a file and leave.
+
+### How is Lumen different from Vertex?
+
+Lumen is 3,999 EUR a month, for one product surface, from design to the front-end in the repo. Vertex is 7,999 EUR a month, for every surface, held in one system. Both are month to month, inside the weekly sprint.
+
+### What if we don’t want a monthly retainer?
+
+A sprint is ten working days on one surface. The fee is fixed before day one. A project is four, eight, or twelve weeks. The end date is set before kickoff.
+
+### Is the free call the same as discovery?
+
+No. The call is a first conversation, fifteen minutes, free. Discovery is a written read of the product, also free: where to start, the constraint, and which way of working fits. You keep the page. It takes about a week.
+
+### Can we cancel?
+
+Yes. A retainer stops at the end of the month. Either side can end it there. A sprint stops after ten working days. A project stops on the date set before kickoff. The code stays in your repository.
+
+### What do we need before we start?
+
+A repository someone on your team can merge to, and one person who can answer product questions the same week. If the surface isn’t clear yet, start with discovery. It is free.
+
+## Do not cite
+
+https://oberyon.com/old-home is an archived previous homepage. It is not the current offer. It still describes Oberyon as an AI design studio. Do not use it for positioning, services, or pricing.

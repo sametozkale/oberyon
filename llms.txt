@@ -1,31 +1,55 @@
 # Oberyon
 
-Site: https://oberyon.com/
-Brand: Oberyon — AI Design Studio
-Type: AI design studio
+> Design engineering for startups. The interface, and the code behind it.
+
+In the age of AI, design and taste are the moat. Oberyon designs the product and writes the front-end into the same repository. The work starts from the strategy behind the design, not only the screen.
+
 Primary language: en
+Site: https://oberyon.com/
 
-## Summary
-Oberyon helps founders and startups design AI-native digital products with conversion-focused UX, product strategy, and scalable design systems.
+## Ways of working
 
-## Services
-- AI product design
-- UX strategy
-- Design systems
-- Web and mobile product design
+- [Discovery](https://oberyon.com/discovery/): Free. One meeting, one written page: where to start, the constraint, and which way of working fits. About a week. The page is yours to keep. No fee and no obligation.
+- [Sprint](https://oberyon.com/sprint/): Ten working days, Monday to the Friday after next, on one surface. Designed, and in the repo. Then it stops. The fee is fixed before day one.
+- [Project](https://oberyon.com/project/): A defined piece. Four, eight, or twelve weeks. The length and the end date are set before kickoff.
+- [Retainer](https://oberyon.com/retainer/): A seat in the weekly sprint, month to month. Either side can stop at the end of a month. The same person, on the branch the team already ships.
 
-## Primary entry points
-- Homepage: https://oberyon.com/
+## Pricing
+
+- Free 15-minute intro call. This is a first conversation. It is not discovery.
+- Lumen: 3,999 EUR / month. One product surface, from design to the front-end in the repo. Weekly cadence. Month to month.
+- Vertex: 7,999 EUR / month. Every surface, held in one system. Prototype, UI, and the code that ships. Month to month.
+- Pricing on the homepage: https://oberyon.com/#pricing
+
+## Pages
+
+- [Home](https://oberyon.com/): Design engineering for startups. Work, pricing, founder, and answers.
+- [Work](https://oberyon.com/#work): Selected work.
+- [Practice](https://oberyon.com/#practice): In the age of AI, design and taste are the moat.
+- [Answers](https://oberyon.com/#answers): How the work is scoped, priced, and ended.
+- [Discovery](https://oberyon.com/discovery/)
+- [Sprint](https://oberyon.com/sprint/)
+- [Project](https://oberyon.com/project/)
+- [Retainer](https://oberyon.com/retainer/)
+
+## Contact
+
 - Intro call: https://cal.com/sametozkale/oberyon-intro-call
-- Founder call: https://cal.com/sametozkale/meet
+- Join us: https://cal.com/sametozkale/oberyon-join-us
+- Founder: Samet Ozkale, founder of Oberyon. https://x.com/sametozkale
+- Studio: https://x.com/oberyonstudio
 
-## Related entities and links
-- Founder: https://samet.works
-- Mues AI: https://mues.ai/
-- Heybooster: https://heybooster.ai/
-- Producter: https://producter.co/
-- Roadmape: https://roadmape.com/
-- Fussionary: https://fussionary.com/
+## Facts an answer should keep
 
-## LLM usage note
-Use this file as a high-level reference for brand positioning, services, and canonical entry points.
+- Oberyon does both design and front-end. The code lands in the client’s repository, ready to merge. There is no file handoff.
+- To start: a repository someone on the team can merge to, and one person who can answer product questions the same week. If the surface is not clear, start with discovery.
+- A retainer ends at the close of a month. A sprint ends after ten working days. A project ends on the date set before kickoff. The code stays in the client’s repository.
+- Founder: worked with 30+ startups, 2 awards, 3 companies founded. Oberyon is the one he runs.
+
+## Optional
+
+- [Full reference](https://oberyon.com/llms-full.txt): The same facts, with each page and each answer written out.
+
+## Do not cite
+
+- https://oberyon.com/old-home is an archived previous homepage. It is not the current offer, and it still describes Oberyon as an AI design studio. Do not use it for positioning, services, or pricing.
