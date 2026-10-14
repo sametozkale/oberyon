@@ -1121,35 +1121,31 @@
         if (view === "sphere") {
             if (event.key === "Escape") {
                 event.preventDefault();
-                if (focused >= 0) closeLit();
+                if (focused >= 0) focused = -1;
                 else close();
             } else if (focused >= 0 && (event.key === "ArrowRight" || event.key === "ArrowDown")) {
                 event.preventDefault();
-                stepLit(1);
+                focused = (focused + 1) % units.length;
             } else if (focused >= 0 && (event.key === "ArrowLeft" || event.key === "ArrowUp")) {
                 event.preventDefault();
-                stepLit(-1);
+                focused = (focused - 1 + units.length) % units.length;
             } else if (event.key === "ArrowRight") {
                 event.preventDefault();
-                autoSpin = false;
                 turn(8, 0);
                 velX = 0;
                 velY = 0;
             } else if (event.key === "ArrowLeft") {
                 event.preventDefault();
-                autoSpin = false;
                 turn(-8, 0);
                 velX = 0;
                 velY = 0;
             } else if (event.key === "ArrowDown") {
                 event.preventDefault();
-                autoSpin = false;
                 turn(0, 8);
                 velX = 0;
                 velY = 0;
             } else if (event.key === "ArrowUp") {
                 event.preventDefault();
-                autoSpin = false;
                 turn(0, -8);
                 velX = 0;
                 velY = 0;
@@ -1205,7 +1201,7 @@
     let R = [1, 0, 0, 0, Math.cos(tilt0), -Math.sin(tilt0), 0, Math.sin(tilt0), Math.cos(tilt0)];
 
     const INTRO_DELAY = 1.35;
-    const INTRO_ORBIT = 2.7;
+    const INTRO_ORBIT = 2.5;
     const INTRO_STAGGER = 1.5;
     const INTRO_FADE = 1.2;
     const INTRO_ENTER = 0.82;
@@ -1217,6 +1213,9 @@
     let sphereScale = 1;
     let eyeRatio = 3;
     let tilePx = 160;
+    let pickT = 0;
+    let pickIndex = -1;
+    let sphereStamp = 0;
 
     works.forEach(function (work, i) {
         const n = works.length;
@@ -1271,7 +1270,7 @@
         const floor = width <= 380 ? 96 : width <= 640 ? 112 : 140;
         radius = Math.max(floor, Math.min(440, fitH, fitW));
         perspective = width <= 380 ? 620 : width <= 640 ? 760 : width <= 900 ? 920 : 1150;
-        tilePx = Math.round(radius * 0.44);
+        tilePx = Math.round(radius * 0.26);
         sphere.style.setProperty("--persp", perspective + "px");
         sphere.style.setProperty("--cw", tilePx + "px");
         units.forEach(function (unit, i) {
@@ -1386,7 +1385,7 @@
         if (reduced) {
             introOn = false;
             sphereScale = 1;
-            eyeRatio = 0.48;
+            eyeRatio = 0.6;
             resetPose(0, 0);
             return;
         }
@@ -1394,6 +1393,52 @@
         sphereScale = 0.7;
         eyeRatio = 3;
         resetPose(0, -90);
+    }
+
+    function placeFacing(card) {
+        const aspect = 816 / 1100;
+        let w = Math.max(240, stage.clientWidth * 0.9);
+        let h = w * aspect;
+        const maxH = Math.max(180, stage.clientHeight * 0.86);
+        if (h > maxH) {
+            h = maxH;
+            w = h / aspect;
+        }
+        const next = Math.round(w) + "x" + Math.round(h);
+        if (card.parentElement !== sphereStage) sphereStage.appendChild(card);
+        card.classList.add("is-facing");
+        if (card._flat !== next) {
+            card._flat = next;
+            card.style.width = Math.round(w) + "px";
+            card.style.height = Math.round(h) + "px";
+            card.style.margin = "0";
+            card.style.left = "50%";
+            card.style.top = "46%";
+            card.style.zIndex = "5";
+        }
+        card.style.transform = "translate(-50%, -50%)";
+    }
+
+    function restoreCard(card) {
+        if (card.parentElement !== orb) orb.appendChild(card);
+        card._flat = "";
+        card.classList.remove("is-facing");
+        card._posed = 0;
+        card._sharp = false;
+        card.style.transform = card._home || "";
+        const work = units[Number(card.dataset.idx)] && units[Number(card.dataset.idx)].work;
+        if (work) {
+            const src = work.card || work.src;
+            card.querySelectorAll("img").forEach(function (img) {
+                if (img.getAttribute("src") !== src) img.src = src;
+            });
+        }
+        card.style.width = "";
+        card.style.height = "";
+        card.style.margin = "";
+        card.style.left = "";
+        card.style.top = "";
+        card.style.zIndex = "";
     }
 
     function paintSphere(now) {
@@ -1406,9 +1451,9 @@
             introYaw += spin;
             resetPose(introYaw, -90 * (1 - orbit));
             sphereScale = 0.7 + 0.3 * enter;
-            eyeRatio = 3 + (0.48 - 3) * enter;
+            eyeRatio = 3 + (0.6 - 3) * enter;
             if (elapsed >= INTRO_END + INTRO_ENTER) introOn = false;
-        } else if (!dragging && focused < 0 && autoSpin && !reduced) {
+        } else if (!dragging && autoSpin && !reduced) {
             turn(0.001 * 180 / Math.PI, 0);
         }
         if (!dragging && focused < 0 && (velX || velY)) {
@@ -1421,42 +1466,85 @@
         const eye = radius * eyeRatio;
         const pull = perspective - eye;
         world.style.transform = "translateZ(" + pull.toFixed(2) + "px) scale(" + sphereScale.toFixed(4) + ") " + cssRot(R);
-        const tileScale = eye < radius ? 0.62 : 1;
-        const tileNow = Math.round(tilePx * tileScale);
-        if (sphere._tile !== tileNow) {
-            sphere._tile = tileNow;
-            sphere.style.setProperty("--cw", tileNow + "px");
+        if (sphere._tile !== tilePx) {
+            sphere._tile = tilePx;
+            sphere.style.setProperty("--cw", tilePx + "px");
         }
+        const dt = sphereStamp ? Math.min(0.05, (now - sphereStamp) / 1000) : 0.016;
+        sphereStamp = now;
+        if (focused >= 0) pickIndex = focused;
+        pickT += ((focused >= 0 ? 1 : 0) - pickT) * (reduced ? 1 : (1 - Math.exp(-8 * dt)));
+        if (Math.abs((focused >= 0 ? 1 : 0) - pickT) < 0.012) pickT = focused >= 0 ? 1 : 0;
+        if (pickT === 0) pickIndex = -1;
         let worldMatrix = null;
         try { worldMatrix = new DOMMatrix(world.style.transform); } catch (err) { worldMatrix = new DOMMatrix(); }
         stage.classList.remove("is-deep");
+        const near = Math.max(110, radius * 0.34);
         units.forEach(function (unit, i) {
             const light = 1;
             const shown = introAt ? introEase((elapsed - (INTRO_DELAY + (INTRO_STAGGER / works.length) * i)) / INTRO_FADE) : 1;
+            const opening = i === pickIndex && pickT > 0;
             let fade = shown;
-            if (focused >= 0) fade = i === focused ? 0 : shown * 0.35;
+            if (pickIndex >= 0 && pickT > 0.02) fade = i === pickIndex ? shown : shown * (1 - 0.65 * pickT);
             const card = cards[i];
-            const shownTile = tilePx * sphereScale * (eye < radius ? 0.62 : 1);
             let behind = false;
-            if (card._home) {
+            let spanX = 0;
+            if (!opening && card._home) {
                 const home = new DOMMatrix(card._home);
-                const point = worldMatrix.transformPoint(new DOMPoint(home.m41, home.m42, home.m43));
-                const dist = perspective - point.z;
-                behind = dist < 64;
-                if (!behind && eye < radius) {
-                    const halfX = shownTile * 0.5 * perspective / dist;
-                    const halfY = halfX * 816 / 1100;
-                    const sx = point.x * perspective / dist;
-                    const sy = point.y * perspective / dist;
-                    const limitX = stage.clientWidth * 0.5 - 20;
-                    const limitY = stage.clientHeight * 0.5 - 20;
-                    behind = Math.abs(sx) + halfX > limitX || Math.abs(sy) + halfY > limitY;
+                const hw = tilePx * 0.5;
+                const hh = hw * 816 / 1100;
+                const corners = [new DOMPoint(hw, hh, 0), new DOMPoint(-hw, hh, 0), new DOMPoint(hw, -hh, 0), new DOMPoint(-hw, -hh, 0)];
+                let minDist = Infinity;
+                const pts = [];
+                corners.forEach(function (corner) {
+                    const p = worldMatrix.transformPoint(home.transformPoint(corner));
+                    const dist = perspective - p.z;
+                    if (dist < minDist) minDist = dist;
+                    if (dist > 24) pts.push([p.x * perspective / dist, p.y * perspective / dist]);
+                });
+                const center = worldMatrix.transformPoint(home.transformPoint(new DOMPoint(0, 0, 0)));
+                const centerDist = perspective - center.z;
+                let spanY = 0;
+                if (pts.length === 4) {
+                    let minX = Infinity;
+                    let maxX = -Infinity;
+                    let minY = Infinity;
+                    let maxY = -Infinity;
+                    pts.forEach(function (p) {
+                        if (p[0] < minX) minX = p[0];
+                        if (p[0] > maxX) maxX = p[0];
+                        if (p[1] < minY) minY = p[1];
+                        if (p[1] > maxY) maxY = p[1];
+                    });
+                    spanX = maxX - minX;
+                    spanY = maxY - minY;
                 }
+                behind = centerDist < near || minDist < 36 || pts.length < 4 || spanX > stage.clientWidth * 1.05 || spanY > stage.clientHeight * 1.15;
             }
-            if (card._parked !== (behind ? 1 : 0)) {
+            const corner = opening || spanX < 16 ? 14 : Math.min(14, 14 * tilePx / spanX);
+            if (card._br !== corner) {
+                card._br = corner;
+                card.style.setProperty("--br", corner.toFixed(2) + "px");
+            }
+            if (opening) {
+                card._posed = 1;
+                card._parked = 0;
+                card.style.visibility = "visible";
+                placeFacing(card);
+            } else if (card._parked !== (behind ? 1 : 0) || card._posed) {
+                if (card._posed) restoreCard(card);
+                card._posed = 0;
                 card._parked = behind ? 1 : 0;
                 card.style.visibility = behind ? "hidden" : "visible";
                 card.style.transform = behind ? "scale(0)" : (card._home || "");
+            }
+            const sharp = opening && pickT > 0.35;
+            if (card._sharp !== sharp) {
+                card._sharp = sharp;
+                const src = sharp ? units[i].work.src : (units[i].work.card || units[i].work.src);
+                card.querySelectorAll("img").forEach(function (img) {
+                    if (img.getAttribute("src") !== src) img.src = src;
+                });
             }
             const seen = card.style.getPropertyValue("--seen") === "1";
             const nextFade = (seen ? fade : 0);
@@ -1824,7 +1912,15 @@
     function setView(next) {
         if (next === view) return;
         if (view === "sphere" || view === "grid") {
-            if (focused >= 0) closeLit();
+            if (focused >= 0) {
+                if (view === "grid" || stage.classList.contains("is-lit")) closeLit();
+                else {
+                    focused = -1;
+                    pickT = 0;
+                    pickIndex = -1;
+                    sphere.querySelectorAll(".sphere-card.is-facing").forEach(restoreCard);
+                }
+            }
         }
         view = next;
         const sphereOn = next === "sphere" || next === "grid";
@@ -1913,8 +2009,7 @@
     });
 
     sphereStage.addEventListener("pointerdown", function (event) {
-        if (introOn || event.button !== 0 || focused >= 0 || stage.classList.contains("is-grid")) return;
-        autoSpin = false;
+        if (introOn || event.button !== 0 || stage.classList.contains("is-grid")) return;
         event.stopPropagation();
         ptr = {
             id: event.pointerId,
@@ -1957,7 +2052,10 @@
         dragging = false;
         stage.classList.remove("is-drag");
         ptr = null;
-        if (moved < slop && card) openLit(Number(card.dataset.idx), card);
+        if (moved < slop) {
+            if (focused >= 0) focused = -1;
+            else if (card) focused = Number(card.dataset.idx);
+        }
     }
 
     sphereStage.addEventListener("pointerup", endSpherePointer);
@@ -1971,7 +2069,7 @@
     window.addEventListener("resize", function () {
         placeThumb(true);
         if (view === "sphere") measureSphere(false);
-        if (focused >= 0) {
+        if (focused >= 0 && stage.classList.contains("is-lit")) {
             placePlate();
             pinLitNav();
         }

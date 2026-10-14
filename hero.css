@@ -3108,7 +3108,7 @@ span.shot-line {
     inset: 0;
     margin: 0;
     overflow: hidden;
-    border-radius: 0;
+    border-radius: var(--br, 14px);
     background: transparent;
     box-shadow: none;
     backface-visibility: hidden;
@@ -3119,6 +3119,14 @@ span.shot-line {
     transform: rotateY(180deg) translateZ(1px);
 }
 
+.sphere-card.is-facing {
+    transform-style: flat;
+}
+
+.sphere-card.is-facing figure.sphere-in {
+    display: none;
+}
+
 .sphere-card img {
     display: block;
     width: 100%;
@@ -3127,6 +3135,8 @@ span.shot-line {
     opacity: var(--fade, 0);
     pointer-events: none;
     backface-visibility: visible;
+    border-radius: inherit;
+    transition: opacity 0.35s ease;
 }
 
 .sphere-vig {
