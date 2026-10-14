@@ -24,11 +24,21 @@
     var frame = 0;
     var releaseTimer = 0;
     var touchY = 0;
+    var bandHeight = 0;
+    var open = false;
+    var edgeNow = 0;
     // A light tug at the edge stays blank. The mark only appears after a firmer pull.
     var SLACK = 46;
 
+    function measure() {
+        bandHeight = Math.max(band.offsetHeight, 1);
+    }
+
+    measure();
+    window.addEventListener("resize", measure);
+
     function maxTravel() {
-        return Math.max(band.offsetHeight, 1);
+        return bandHeight || 1;
     }
 
     function pose(progress) {
@@ -54,13 +64,15 @@
 
     function clearLift() {
         sheet.classList.remove("is-lifted", "is-from-top", "is-from-bottom");
-        sheet.style.removeProperty("--lift");
-        sheet.style.removeProperty("--shade");
         document.documentElement.classList.remove("is-edge");
         document.documentElement.style.removeProperty("--lift");
+        document.documentElement.style.removeProperty("--shade");
     }
 
     function hide() {
+        if (!open) return;
+        open = false;
+        edgeNow = 0;
         band.classList.remove("is-out");
         band.setAttribute("aria-hidden", "true");
         band.style.transform = "";
@@ -70,26 +82,37 @@
         clearLift();
     }
 
+    function placeEdge(edge) {
+        if (edgeNow === edge) return;
+        edgeNow = edge;
+        band.classList.add("is-out");
+        band.removeAttribute("aria-hidden");
+        sheet.classList.add("is-lifted");
+        sheet.classList.toggle("is-from-top", edge < 0);
+        sheet.classList.toggle("is-from-bottom", edge > 0);
+        document.documentElement.classList.add("is-edge");
+        document.documentElement.style.setProperty("--shade", edge < 0 ? "-28px" : "28px");
+        if (edge < 0) {
+            band.style.bottom = "auto";
+            band.style.top = "0px";
+        } else {
+            band.style.top = "auto";
+            band.style.bottom = "0px";
+        }
+    }
+
     function show(shown, edge) {
-        var height = band.offsetHeight;
+        var height = bandHeight;
         if (!height) return;
+        open = true;
+        placeEdge(edge);
         var shift = (edge < 0 ? shown : -shown).toFixed(2) + "px";
         var lift = Math.min(1, shown / Math.max(height * 0.62, 1));
         var inset = (lift * window.innerWidth * 0.032).toFixed(2) + "px";
         movers.forEach(function (el) {
             el.style.translate = (el === shots ? inset : "0px") + " " + shift;
         });
-        band.classList.add("is-out");
-        band.removeAttribute("aria-hidden");
-        if (edge < 0) {
-            band.style.bottom = "auto";
-            band.style.top = "0px";
-            band.style.transform = "translate3d(0," + (shown - height).toFixed(2) + "px,0)";
-        } else {
-            band.style.top = "auto";
-            band.style.bottom = "0px";
-            band.style.transform = "translate3d(0," + (height - shown).toFixed(2) + "px,0)";
-        }
+        band.style.transform = "translate3d(0," + (edge < 0 ? shown - height : height - shown).toFixed(2) + "px,0)";
         var reveal = shown / height;
         for (var i = 0; i < stamps.length; i += 1) {
             var state = pose((reveal - i * 0.09) / 0.24);
@@ -97,12 +120,6 @@
             stamps[i].style.setProperty("--y", state.y.toFixed(2));
             stamps[i].style.setProperty("--squash", state.squash.toFixed(3));
         }
-        sheet.classList.add("is-lifted");
-        sheet.classList.toggle("is-from-top", edge < 0);
-        sheet.classList.toggle("is-from-bottom", edge > 0);
-        sheet.style.setProperty("--lift", lift.toFixed(3));
-        sheet.style.setProperty("--shade", edge < 0 ? "-28px" : "28px");
-        document.documentElement.classList.add("is-edge");
         document.documentElement.style.setProperty("--lift", lift.toFixed(3));
     }
 
@@ -120,12 +137,17 @@
         frame = window.requestAnimationFrame(step);
     }
 
-    function step() {
+    var lastTime = 0;
+
+    function step(now) {
         frame = 0;
-        pull += (target - pull) * 0.18;
+        var dt = lastTime ? Math.min(34, now - lastTime) : 16;
+        lastTime = now;
+        pull += (target - pull) * (1 - Math.exp(-dt / 72));
         if (Math.abs(target) < 0.4 && Math.abs(pull) < 0.5) {
             pull = 0;
             target = 0;
+            lastTime = 0;
             apply();
             return;
         }
@@ -161,9 +183,8 @@
         if (next > 0 && !(atBottom() || target > 0 || pull > 1)) next = 0;
         if (next < 0 && !(atTop() || target < 0 || pull < -1)) next = 0;
         target = Math.max(-ceiling, Math.min(ceiling, next));
-        pull += (target - pull) * 0.45;
-        apply();
         hold();
+        kick();
     }
 
     function onWheel(event) {

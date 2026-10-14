@@ -339,7 +339,104 @@
         document.addEventListener("keydown", function (event) {
             if (event.key === "Escape") setOpen(false);
         });
+
+        fan.addEventListener("click", function (event) {
+            const link = event.target.closest("a");
+            if (!link) return;
+            const href = link.getAttribute("href") || "";
+            if (href === "#work") {
+                event.preventDefault();
+                setOpen(false);
+                const line = document.querySelector(".shot-line");
+                if (line) line.click();
+                return;
+            }
+            if (href.charAt(0) !== "#") return;
+            const target = document.querySelector(href);
+            if (!target) return;
+            event.preventDefault();
+            setOpen(false);
+            target.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
+            if (history.replaceState) history.replaceState(null, "", href);
+        });
     }
+
+    (function heroDrops() {
+        var hero = document.querySelector(".hero");
+        if (!hero) return;
+        var field = document.createElement("div");
+        field.className = "hero-drops";
+        field.setAttribute("aria-hidden", "true");
+        hero.prepend(field);
+        var sources = ["portfolio/card/D-0.1.webp", "portfolio/card/D-0.2.webp", "portfolio/card/D-0.3.webp", "portfolio/card/D-0.4.webp", "portfolio/card/D-1.webp", "portfolio/card/D-2.webp", "portfolio/card/D-3.webp", "portfolio/card/D-4.webp", "portfolio/card/D-5.webp", "portfolio/card/D-6.webp", "portfolio/card/D-7.webp", "portfolio/card/D-8.webp", "portfolio/card/D-9.webp", "portfolio/card/D-10.webp", "portfolio/card/D-11.webp", "portfolio/card/D-12.webp", "portfolio/card/D-13.webp", "portfolio/card/D-14.webp", "portfolio/card/D-15.webp", "portfolio/card/C-1.webp", "portfolio/card/C-2.webp", "portfolio/card/C-3.webp", "portfolio/card/C-4.webp", "portfolio/card/C-5.webp", "portfolio/card/C-6.webp", "portfolio/card/C-7.webp", "portfolio/card/C-8.webp", "portfolio/card/C-9.webp", "portfolio/card/C-10.webp", "portfolio/card/C-11.webp", "portfolio/card/C-12.webp", "portfolio/card/C-13.webp", "portfolio/card/C-14.webp", "portfolio/card/C-15.webp", "portfolio/card/C-16.webp", "portfolio/card/C-17.webp", "portfolio/card/C-18.webp", "portfolio/card/W-1.webp", "portfolio/card/W-2.webp", "portfolio/card/W-3.webp", "portfolio/card/W-4.webp", "portfolio/card/W-5.webp", "portfolio/card/W-6.webp", "portfolio/card/W-7.webp", "portfolio/card/W-8.webp", "portfolio/card/W-9.webp", "portfolio/card/W-10.webp", "portfolio/card/W-11.webp", "portfolio/card/W-12.webp", "portfolio/card/W-13.webp", "portfolio/card/W-14.webp", "portfolio/card/Mues-AI-Logo.webp", "portfolio/card/Producter-Logo.webp", "portfolio/card/Roadmape-Logo.webp", "portfolio/card/Fussionary-Logo.webp", "portfolio/card/Oberyon-Logo.webp"];
+        var ready = sources.map(function (src) {
+            var img = new Image();
+            img.decoding = "async";
+            img.alt = "";
+            return { img: img, src: src, job: null, started: false };
+        });
+        function arm(item) {
+            if (item.started) return item.job;
+            item.started = true;
+            item.img.src = item.src;
+            item.job = item.img.decode ? item.img.decode().catch(function () {}) : Promise.resolve();
+            return item.job;
+        }
+        ready.slice(0, 8).forEach(arm);
+        var armRest = function () { ready.forEach(arm); };
+        if (window.requestIdleCallback) window.requestIdleCallback(armRest, { timeout: 1600 });
+        else window.setTimeout(armRest, 500);
+        var cursor = 0;
+
+        function dismiss(drop) {
+            drop.classList.add("is-out");
+            window.setTimeout(function () {
+                if (drop.parentNode) drop.parentNode.removeChild(drop);
+            }, reduced ? 0 : 380);
+        }
+
+        function reveal(drop) {
+            field.appendChild(drop);
+            if (reduced) drop.classList.add("is-in");
+            else requestAnimationFrame(function () { drop.classList.add("is-in"); });
+            window.setTimeout(function () { dismiss(drop); }, reduced ? 700 : 1600);
+        }
+
+        hero.addEventListener("click", function (event) {
+            if (event.target.closest("a, button, input, textarea, select, summary, label")) return;
+            if (document.body.classList.contains("is-shot")) return;
+            var rect = hero.getBoundingClientRect();
+            var cardW = Math.min(280, rect.width * 0.46);
+            var cardH = cardW * 0.75;
+            var turn = Math.random() * 8 - 4;
+            var rad = Math.abs(turn) * Math.PI / 180;
+            var boxW = cardW * Math.cos(rad) + cardH * Math.sin(rad);
+            var boxH = cardW * Math.sin(rad) + cardH * Math.cos(rad) + cardH * 0.08;
+            var pad = 10;
+            function place(value, size, limit) {
+                var edge = size / 2 + pad;
+                var min = edge;
+                var max = limit - edge;
+                if (max < min) return limit / 2;
+                return Math.max(min, Math.min(max, value));
+            }
+            var x = place(event.clientX - rect.left, boxW, rect.width);
+            var y = place(event.clientY - rect.top, boxH, rect.height);
+            var item = ready[cursor % ready.length];
+            cursor += 1;
+            arm(item);
+            var drop = document.createElement("div");
+            drop.className = "hero-drop";
+            drop.style.left = x + "px";
+            drop.style.top = y + "px";
+            drop.style.setProperty("--turn", turn.toFixed(2) + "deg");
+            var img = item.img.cloneNode(false);
+            img.alt = "";
+            drop.appendChild(img);
+            if (item.img.complete && item.img.naturalWidth) reveal(drop);
+            else item.job.then(function () { reveal(drop); });
+        });
+    })();
 
     if (reduced || !stage || !rig) return;
 

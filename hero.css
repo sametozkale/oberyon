@@ -117,7 +117,7 @@ html.is-edge .mark-band {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 128px 24px 128px;
+    padding: 152px 24px 160px;
     text-align: center;
 }
 
@@ -215,7 +215,7 @@ html.is-edge .mark-band {
 
 @media (max-width: 800px) {
     .moat {
-        padding: 88px 20px 96px;
+        padding: 104px 20px 112px;
     }
 
     .moat-mark {
@@ -255,6 +255,53 @@ html.is-edge .mark-band {
     height: 100%;
     pointer-events: none;
     image-rendering: pixelated;
+}
+
+.hero-drops {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.hero-drop {
+    position: absolute;
+    width: min(280px, 46vw);
+    aspect-ratio: 4 / 3;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #f4f7f5;
+    box-shadow: 0 18px 44px rgba(6, 22, 16, 0.32);
+    opacity: 0;
+    transform: translate(-50%, -46%) scale(0.96) rotate(var(--turn, 0deg));
+}
+
+.hero-drop.is-in {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1) rotate(var(--turn, 0deg));
+    transition: opacity 0.45s var(--ease), transform 0.55s var(--ease);
+}
+
+.hero-drop.is-out {
+    opacity: 0;
+    transform: translate(-50%, -54%) scale(0.98) rotate(var(--turn, 0deg));
+    transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+.hero-drop img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .hero-drop,
+    .hero-drop.is-in,
+    .hero-drop.is-out {
+        transition: none;
+    }
 }
 
 .copy {
@@ -1135,7 +1182,7 @@ body.is-in .hero-cta {
 .founder {
     width: min(640px, calc(100% - 48px));
     margin: 0 auto;
-    padding: 72px 0 32px;
+    padding: 96px 0 56px;
     text-align: center;
 }
 
@@ -1183,7 +1230,7 @@ body.is-in .hero-cta {
 }
 
 .founder-sign small {
-    margin-top: 2px;
+    margin-top: 6px;
     font-family: "IBM Plex Mono", ui-monospace, monospace;
     font-size: 12px;
     letter-spacing: 0.04em;
@@ -1198,7 +1245,7 @@ body.is-in .hero-cta {
 .faq {
     width: min(680px, calc(100% - 48px));
     margin: 0 auto;
-    padding: 128px 0 96px;
+    padding: 152px 0 120px;
     scroll-margin-top: 88px;
 }
 
@@ -1352,7 +1399,7 @@ body.is-in .hero-cta {
     display: flex;
     align-items: center;
     gap: 4px;
-    padding: 6px;
+    padding: 0 6px;
     border-radius: 999px;
     isolation: isolate;
     background: rgba(18, 60, 48, 0.5);
@@ -1400,7 +1447,7 @@ body.is-in .hero-cta {
 .dock-goo {
     position: relative;
     z-index: 2;
-    width: 36px;
+    width: auto;
     height: 36px;
     flex: none;
 }
@@ -1414,21 +1461,35 @@ body.is-in .hero-cta {
 .dock-mark {
     position: relative;
     z-index: 4;
-    display: grid;
-    place-items: center;
-    width: 36px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    width: auto;
     height: 36px;
-    padding: 0;
+    padding: 0 12px 0 10px;
     border: 0;
     border-radius: 999px;
     background: transparent;
     color: #fff;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1;
     cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+.dock-mark span {
+    position: relative;
+    z-index: 1;
 }
 
 .dock-mark::before {
     content: "";
     position: absolute;
+    left: 2px;
+    top: 2px;
     width: 32px;
     height: 32px;
     border-radius: 999px;
@@ -1455,13 +1516,13 @@ body.is-in .hero-cta {
 
 .dock-mark:focus-visible {
     outline: 2px solid rgba(232, 242, 236, 0.75);
-    outline-offset: 2px;
+    outline-offset: -2px;
 }
 
 .dock-sil,
 .dock-fan {
     position: absolute;
-    left: 50%;
+    left: 18px;
     bottom: 0;
     width: 420px;
     height: 230px;
@@ -1816,7 +1877,7 @@ body.is-in .hero-cta {
 .plans {
     width: min(1080px, calc(100% - 48px));
     margin: 8px auto 0;
-    padding: 48px 0 96px;
+    padding: 72px 0 120px;
 }
 
 .plans-row {
@@ -1990,6 +2051,12 @@ body.is-in .hero-cta {
     margin: 36px 0 18px;
 }
 
+.plans-lumen ul,
+.plans-vertex ul {
+    margin-top: auto;
+    margin-bottom: 0;
+}
+
 .plans-card li {
     display: flex;
     gap: 8px;
@@ -2059,6 +2126,11 @@ body.is-in .hero-cta {
     .plans-vertex {
         grid-row: 3;
     }
+
+    .plans-lumen ul,
+    .plans-vertex ul {
+        margin: 28px 0 18px;
+    }
 }
 
 @media (max-width: 640px) {
@@ -2115,7 +2187,7 @@ body.is-in .hero-cta {
 .mac-block {
     display: flex;
     justify-content: center;
-    padding: 72px 24px 140px;
+    padding: 96px 24px 140px;
 }
 
 .desk {
@@ -2495,17 +2567,26 @@ body.is-in .hero-cta {
 .sheet.is-lifted {
     z-index: 2;
     overflow: hidden;
-    scale: calc(1 - var(--lift, 0) * 0.064) 1;
     border-radius: calc(var(--lift, 0) * 18px);
+    scale: calc(1 - var(--lift, 0) * 0.064) 1;
     box-shadow:
         0 0 0 1px rgba(232, 242, 236, calc(var(--lift, 0) * 0.2)),
         0 var(--shade, 0px) calc(16px + var(--lift, 0) * 28px) rgba(3, 12, 10, calc(0.04 + var(--lift, 0) * 0.08)),
         0 var(--shade, 0px) 6px rgba(3, 12, 10, calc(var(--lift, 0) * 0.05));
+    will-change: translate;
 }
 
 html.is-edge .dock {
     transform: translateX(-50%) scale(calc(1 - var(--lift, 0) * 0.064));
     transform-origin: center center;
+    background: rgba(14, 40, 32, 0.92);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+}
+
+html.is-edge .dock-cta {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
 }
 
 .sheet.is-lifted::after {
@@ -2541,10 +2622,12 @@ html.is-edge .dock {
     overflow: hidden;
     pointer-events: none;
     visibility: hidden;
+    isolation: isolate;
 }
 
 .mark-band.is-out {
     visibility: visible;
+    will-change: transform;
 }
 
 .mark-band::before {
@@ -2565,18 +2648,35 @@ html.is-edge .dock {
     position: relative;
     display: block;
     width: min(980px, 86vw);
-    height: auto;
+    aspect-ratio: 94 / 20;
     margin: 0 auto;
 }
 
-.stamp {
-    transform-box: fill-box;
-    transform-origin: center;
+.mark-defs {
+    position: absolute;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+}
+
+.mark-press .stamp {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    transform-origin: center center;
+}
+
+.mark-press .stamp svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
 }
 
 .mark-band.is-armed .stamp {
     opacity: var(--ink, 0);
-    transform: translateY(calc(var(--y, -16) * 1px)) scale(var(--squash, 1.04));
+    transform: translate3d(0, calc(var(--y, -16) * 1px), 0) scale(var(--squash, 1.04));
+    will-change: transform, opacity;
 }
 
 .shots {
@@ -2640,7 +2740,7 @@ span.shot-line {
     height: 2px;
     border-radius: 999px;
     background: #efe8e4;
-    opacity: var(--ink, 0.4);
+    opacity: 0.4;
     transform: translateY(-50%);
     transition: opacity 0.25s ease, background 0.25s ease;
 }
@@ -2653,7 +2753,7 @@ span.shot-line {
     outline: none;
 }
 
-.shot-line.is-peak::after,
+.shot-line:hover::after,
 .shot-line:focus-visible::after {
     background: #fff;
     opacity: 1;
@@ -2682,11 +2782,10 @@ span.shot-line {
     width: min(280px, 30vw);
     padding: 0;
     border: 0;
-    border-radius: 12px;
-    overflow: hidden;
-    background: #f4f7f5;
+    border-radius: 0;
+    overflow: visible;
+    background: transparent;
     cursor: pointer;
-    box-shadow: 0 18px 44px rgba(6, 22, 16, 0.32);
 }
 
 .shot-frame:focus-visible {
@@ -2700,6 +2799,9 @@ span.shot-line {
     height: 168px;
     object-fit: cover;
     object-position: center;
+    border-radius: 12px;
+    background: #f4f7f5;
+    box-shadow: 0 18px 44px rgba(6, 22, 16, 0.32);
 }
 
 .shot-frame .shot-alt,
@@ -3104,9 +3206,14 @@ span.shot-line {
 
 .sphere-rows img {
     display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
+    width: calc(100% + 2px);
+    height: calc(100% + 2px);
+    margin: -1px;
+    object-fit: cover;
+    object-position: center;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
 }
 
 .sphere-lit {
@@ -3146,11 +3253,14 @@ span.shot-line {
 
 .sphere-plate img {
     display: block;
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
+    width: calc(100% + 2px);
+    height: calc(100% + 2px);
+    margin: -1px;
+    object-fit: cover;
     object-position: center;
-    background: #f4f6f5;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
     pointer-events: none;
 }
 
@@ -3334,12 +3444,12 @@ span.shot-line {
     width: 100%;
     height: auto;
     aspect-ratio: 4 / 3;
-    object-fit: contain;
+    object-fit: cover;
     object-position: center;
     background-color: #f4f6f5;
     background-repeat: no-repeat;
     background-position: center;
-    background-size: contain;
+    background-size: cover;
     border: 1px solid rgba(255, 255, 255, 0.8);
     border-radius: 12px;
     box-shadow: 0 12px 28px rgba(6, 18, 14, 0.2);

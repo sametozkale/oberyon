@@ -36,227 +36,283 @@
     const works = [
   {
     "name": "Design work 0.1",
-    "src": "https://www.samet.works/assets/portfolio/D-0.1.png"
+    "src": "portfolio/full/D-0.1.webp",
+    "card": "portfolio/card/D-0.1.webp"
   },
   {
     "name": "Design work 0.2",
-    "src": "https://www.samet.works/assets/portfolio/D-0.2.png"
+    "src": "portfolio/full/D-0.2.webp",
+    "card": "portfolio/card/D-0.2.webp"
   },
   {
     "name": "Design work 0.3",
-    "src": "https://www.samet.works/assets/portfolio/D-0.3.png"
+    "src": "portfolio/full/D-0.3.webp",
+    "card": "portfolio/card/D-0.3.webp"
   },
   {
     "name": "Design work 0.4",
-    "src": "https://www.samet.works/assets/portfolio/D-0.4.png"
+    "src": "portfolio/full/D-0.4.webp",
+    "card": "portfolio/card/D-0.4.webp"
   },
   {
     "name": "Design work 1",
-    "src": "https://www.samet.works/assets/portfolio/D-1.png"
+    "src": "portfolio/full/D-1.webp",
+    "card": "portfolio/card/D-1.webp"
   },
   {
     "name": "Design work 2",
-    "src": "https://www.samet.works/assets/portfolio/D-2.png"
+    "src": "portfolio/full/D-2.webp",
+    "card": "portfolio/card/D-2.webp"
   },
   {
     "name": "Design work 3",
-    "src": "https://www.samet.works/assets/portfolio/D-3.png"
+    "src": "portfolio/full/D-3.webp",
+    "card": "portfolio/card/D-3.webp"
   },
   {
     "name": "Design work 4",
-    "src": "https://www.samet.works/assets/portfolio/D-4.png"
+    "src": "portfolio/full/D-4.webp",
+    "card": "portfolio/card/D-4.webp"
   },
   {
     "name": "Design work 5",
-    "src": "https://www.samet.works/assets/portfolio/D-5.png"
+    "src": "portfolio/full/D-5.webp",
+    "card": "portfolio/card/D-5.webp"
   },
   {
     "name": "Design work 6",
-    "src": "https://www.samet.works/assets/portfolio/D-6.png"
+    "src": "portfolio/full/D-6.webp",
+    "card": "portfolio/card/D-6.webp"
   },
   {
     "name": "Design work 7",
-    "src": "https://www.samet.works/assets/portfolio/D-7.png"
+    "src": "portfolio/full/D-7.webp",
+    "card": "portfolio/card/D-7.webp"
   },
   {
     "name": "Design work 8",
-    "src": "https://www.samet.works/assets/portfolio/D-8.png"
+    "src": "portfolio/full/D-8.webp",
+    "card": "portfolio/card/D-8.webp"
   },
   {
     "name": "Design work 9",
-    "src": "https://www.samet.works/assets/portfolio/D-9.png"
+    "src": "portfolio/full/D-9.webp",
+    "card": "portfolio/card/D-9.webp"
   },
   {
     "name": "Design work 10",
-    "src": "https://www.samet.works/assets/portfolio/D-10.png"
+    "src": "portfolio/full/D-10.webp",
+    "card": "portfolio/card/D-10.webp"
   },
   {
     "name": "Design work 11",
-    "src": "https://www.samet.works/assets/portfolio/D-11.png"
+    "src": "portfolio/full/D-11.webp",
+    "card": "portfolio/card/D-11.webp"
   },
   {
     "name": "Design work 12",
-    "src": "https://www.samet.works/assets/portfolio/D-12.png"
+    "src": "portfolio/full/D-12.webp",
+    "card": "portfolio/card/D-12.webp"
   },
   {
     "name": "Design work 13",
-    "src": "https://www.samet.works/assets/portfolio/D-13.png"
+    "src": "portfolio/full/D-13.webp",
+    "card": "portfolio/card/D-13.webp"
   },
   {
     "name": "Design work 14",
-    "src": "https://www.samet.works/assets/portfolio/D-14.png"
+    "src": "portfolio/full/D-14.webp",
+    "card": "portfolio/card/D-14.webp"
   },
   {
     "name": "Design work 15",
-    "src": "https://www.samet.works/assets/portfolio/D-15.png"
+    "src": "portfolio/full/D-15.webp",
+    "card": "portfolio/card/D-15.webp"
   },
   {
     "name": "Component work 1",
-    "src": "https://www.samet.works/assets/portfolio/C-1.png"
+    "src": "portfolio/full/C-1.webp",
+    "card": "portfolio/card/C-1.webp"
   },
   {
     "name": "Component work 2",
-    "src": "https://www.samet.works/assets/portfolio/C-2.png"
+    "src": "portfolio/full/C-2.webp",
+    "card": "portfolio/card/C-2.webp"
   },
   {
     "name": "Component work 3",
-    "src": "https://www.samet.works/assets/portfolio/C-3.png"
+    "src": "portfolio/full/C-3.webp",
+    "card": "portfolio/card/C-3.webp"
   },
   {
     "name": "Component work 4",
-    "src": "https://www.samet.works/assets/portfolio/C-4.png"
+    "src": "portfolio/full/C-4.webp",
+    "card": "portfolio/card/C-4.webp"
   },
   {
     "name": "Component work 5",
-    "src": "https://www.samet.works/assets/portfolio/C-5.png"
+    "src": "portfolio/full/C-5.webp",
+    "card": "portfolio/card/C-5.webp"
   },
   {
     "name": "Component work 6",
-    "src": "https://www.samet.works/assets/portfolio/C-6.png"
+    "src": "portfolio/full/C-6.webp",
+    "card": "portfolio/card/C-6.webp"
   },
   {
     "name": "Component work 7",
-    "src": "https://www.samet.works/assets/portfolio/C-7.png"
+    "src": "portfolio/full/C-7.webp",
+    "card": "portfolio/card/C-7.webp"
   },
   {
     "name": "Component work 8",
-    "src": "https://www.samet.works/assets/portfolio/C-8.png"
+    "src": "portfolio/full/C-8.webp",
+    "card": "portfolio/card/C-8.webp"
   },
   {
     "name": "Component work 9",
-    "src": "https://www.samet.works/assets/portfolio/C-9.png"
+    "src": "portfolio/full/C-9.webp",
+    "card": "portfolio/card/C-9.webp"
   },
   {
     "name": "Component work 10",
-    "src": "https://www.samet.works/assets/portfolio/C-10.png"
+    "src": "portfolio/full/C-10.webp",
+    "card": "portfolio/card/C-10.webp"
   },
   {
     "name": "Component work 11",
-    "src": "https://www.samet.works/assets/portfolio/C-11.png"
+    "src": "portfolio/full/C-11.webp",
+    "card": "portfolio/card/C-11.webp"
   },
   {
     "name": "Component work 12",
-    "src": "https://www.samet.works/assets/portfolio/C-12.png"
+    "src": "portfolio/full/C-12.webp",
+    "card": "portfolio/card/C-12.webp"
   },
   {
     "name": "Component work 13",
-    "src": "https://www.samet.works/assets/portfolio/C-13.png"
+    "src": "portfolio/full/C-13.webp",
+    "card": "portfolio/card/C-13.webp"
   },
   {
     "name": "Component work 14",
-    "src": "https://www.samet.works/assets/portfolio/C-14.png"
+    "src": "portfolio/full/C-14.webp",
+    "card": "portfolio/card/C-14.webp"
   },
   {
     "name": "Component work 15",
-    "src": "https://www.samet.works/assets/portfolio/C-15.png"
+    "src": "portfolio/full/C-15.webp",
+    "card": "portfolio/card/C-15.webp"
   },
   {
     "name": "Component work 16",
-    "src": "https://www.samet.works/assets/portfolio/C-16.png"
+    "src": "portfolio/full/C-16.webp",
+    "card": "portfolio/card/C-16.webp"
   },
   {
     "name": "Component work 17",
-    "src": "https://www.samet.works/assets/portfolio/C-17.png"
+    "src": "portfolio/full/C-17.webp",
+    "card": "portfolio/card/C-17.webp"
   },
   {
     "name": "Component work 18",
-    "src": "https://www.samet.works/assets/portfolio/C-18.png"
+    "src": "portfolio/full/C-18.webp",
+    "card": "portfolio/card/C-18.webp"
   },
   {
     "name": "Website work 1",
-    "src": "https://www.samet.works/assets/portfolio/W-1.png"
+    "src": "portfolio/full/W-1.webp",
+    "card": "portfolio/card/W-1.webp"
   },
   {
     "name": "Website work 2",
-    "src": "https://www.samet.works/assets/portfolio/W-2.png"
+    "src": "portfolio/full/W-2.webp",
+    "card": "portfolio/card/W-2.webp"
   },
   {
     "name": "Website work 3",
-    "src": "https://www.samet.works/assets/portfolio/W-3.png"
+    "src": "portfolio/full/W-3.webp",
+    "card": "portfolio/card/W-3.webp"
   },
   {
     "name": "Website work 4",
-    "src": "https://www.samet.works/assets/portfolio/W-4.png"
+    "src": "portfolio/full/W-4.webp",
+    "card": "portfolio/card/W-4.webp"
   },
   {
     "name": "Website work 5",
-    "src": "https://www.samet.works/assets/portfolio/W-5.png"
+    "src": "portfolio/full/W-5.webp",
+    "card": "portfolio/card/W-5.webp"
   },
   {
     "name": "Website work 6",
-    "src": "https://www.samet.works/assets/portfolio/W-6.png"
+    "src": "portfolio/full/W-6.webp",
+    "card": "portfolio/card/W-6.webp"
   },
   {
     "name": "Website work 7",
-    "src": "https://www.samet.works/assets/portfolio/W-7.png"
+    "src": "portfolio/full/W-7.webp",
+    "card": "portfolio/card/W-7.webp"
   },
   {
     "name": "Website work 8",
-    "src": "https://www.samet.works/assets/portfolio/W-8.png"
+    "src": "portfolio/full/W-8.webp",
+    "card": "portfolio/card/W-8.webp"
   },
   {
     "name": "Website work 9",
-    "src": "https://www.samet.works/assets/portfolio/W-9.png"
+    "src": "portfolio/full/W-9.webp",
+    "card": "portfolio/card/W-9.webp"
   },
   {
     "name": "Website work 10",
-    "src": "https://www.samet.works/assets/portfolio/W-10.png"
+    "src": "portfolio/full/W-10.webp",
+    "card": "portfolio/card/W-10.webp"
   },
   {
     "name": "Website work 11",
-    "src": "https://www.samet.works/assets/portfolio/W-11.png"
+    "src": "portfolio/full/W-11.webp",
+    "card": "portfolio/card/W-11.webp"
   },
   {
     "name": "Website work 12",
-    "src": "https://www.samet.works/assets/portfolio/W-12.png"
+    "src": "portfolio/full/W-12.webp",
+    "card": "portfolio/card/W-12.webp"
   },
   {
     "name": "Website work 13",
-    "src": "https://www.samet.works/assets/portfolio/W-13.png"
+    "src": "portfolio/full/W-13.webp",
+    "card": "portfolio/card/W-13.webp"
   },
   {
     "name": "Website work 14",
-    "src": "https://www.samet.works/assets/portfolio/W-14.png"
+    "src": "portfolio/full/W-14.webp",
+    "card": "portfolio/card/W-14.webp"
   },
   {
     "name": "Mues AI Logo",
-    "src": "https://www.samet.works/assets/portfolio/Mues%20AI%20Logo.png"
+    "src": "portfolio/full/Mues-AI-Logo.webp",
+    "card": "portfolio/card/Mues-AI-Logo.webp"
   },
   {
     "name": "Producter Logo",
-    "src": "https://www.samet.works/assets/portfolio/Producter%20Logo.png"
+    "src": "portfolio/full/Producter-Logo.webp",
+    "card": "portfolio/card/Producter-Logo.webp"
   },
   {
     "name": "Roadmape Logo",
-    "src": "https://www.samet.works/assets/portfolio/Roadmape%20Logo.png"
+    "src": "portfolio/full/Roadmape-Logo.webp",
+    "card": "portfolio/card/Roadmape-Logo.webp"
   },
   {
     "name": "Fussionary Logo",
-    "src": "https://www.samet.works/assets/portfolio/Fussionary%20Logo.png"
+    "src": "portfolio/full/Fussionary-Logo.webp",
+    "card": "portfolio/card/Fussionary-Logo.webp"
   },
   {
     "name": "Oberyon Logo",
-    "src": "https://www.samet.works/assets/portfolio/Oberyon%20Logo.png"
+    "src": "portfolio/full/Oberyon-Logo.webp",
+    "card": "portfolio/card/Oberyon-Logo.webp"
   }
 ];
     const rig = stage.querySelector(".hall-rig");
@@ -481,9 +537,6 @@
 
     const SPAN = 8;
     const pool = [];
-    const sharpCache = new Map();
-    const sharpQueue = [];
-    let sharpBusy = false;
 
     function cardFigure(side) {
         const figure = document.createElement("figure");
@@ -498,46 +551,6 @@
         for (let n = 0; n < 4; n += 1) select.append(document.createElement("i"));
         figure.append(img, select);
         return figure;
-    }
-
-    function pumpSharp() {
-        if (sharpBusy || !sharpQueue.length) return;
-        const job = sharpQueue.shift();
-        if (!job.img.isConnected || job.img.dataset.src !== job.src || job.img.dataset.full === "1") {
-            pumpSharp();
-            return;
-        }
-        sharpBusy = true;
-        fetch(job.src).then(function (res) {
-            return res.blob();
-        }).then(function (blob) {
-            return createImageBitmap(blob, { resizeWidth: 2400, resizeQuality: "high" }).catch(function () {
-                return createImageBitmap(blob);
-            });
-        }).then(function (bitmap) {
-            const maxW = 2400;
-            const scale = Math.min(1, maxW / bitmap.width);
-            const canvas = document.createElement("canvas");
-            canvas.width = Math.max(1, Math.round(bitmap.width * scale));
-            canvas.height = Math.max(1, Math.round(bitmap.height * scale));
-            const ctx = canvas.getContext("2d");
-            ctx.imageSmoothingEnabled = true;
-            ctx.imageSmoothingQuality = "high";
-            ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
-            bitmap.close();
-            return new Promise(function (resolve) {
-                canvas.toBlob(function (out) { resolve(out); }, "image/webp", 0.97);
-            });
-        }).then(function (out) {
-            const url = out ? URL.createObjectURL(out) : job.src;
-            if (out) sharpCache.set(job.src, url);
-            if (job.img.isConnected && job.img.dataset.src === job.src && job.img.dataset.full !== "1") swapWhenReady(job.img, url);
-        }).catch(function () {
-            if (job.img.isConnected && job.img.dataset.src === job.src && job.img.dataset.full !== "1") swapWhenReady(job.img, job.src);
-        }).then(function () {
-            sharpBusy = false;
-            pumpSharp();
-        });
     }
 
     function holdFrame(img) {
@@ -565,29 +578,12 @@
 
     function showWork(img, work, near) {
         img.alt = work.name;
+        const url = near ? work.src : (work.card || work.src);
         const same = img.dataset.src === work.src && img.getAttribute("src");
         if (same && (img.dataset.full === "1" || !near)) return;
-        if (same) {
-            img.dataset.full = "1";
-            swapWhenReady(img, work.src);
-            return;
-        }
         img.dataset.src = work.src;
-        if (near) {
-            img.dataset.full = "1";
-            swapWhenReady(img, work.src);
-            return;
-        }
-        img.dataset.full = "0";
-        if (sharpCache.has(work.src)) {
-            swapWhenReady(img, sharpCache.get(work.src));
-            return;
-        }
-        const queued = sharpQueue.some(function (job) {
-            return job.img === img && job.src === work.src;
-        });
-        if (!queued) sharpQueue.push({ img: img, src: work.src });
-        pumpSharp();
+        img.dataset.full = near ? "1" : "0";
+        swapWhenReady(img, url);
     }
 
     function useOriginal(img) {
@@ -743,6 +739,24 @@
         pool.forEach(function (figure) { figure.classList.remove("is-instant"); });
     }
 
+    let fullWarmed = false;
+
+    function warmFull() {
+        if (fullWarmed) return;
+        fullWarmed = true;
+        let index = 0;
+        function step() {
+            const end = Math.min(works.length, index + 2);
+            for (; index < end; index += 1) {
+                const img = new Image();
+                img.decoding = "async";
+                img.src = works[index].src;
+            }
+            if (index < works.length) window.setTimeout(step, 70);
+        }
+        step();
+    }
+
     function open(i) {
         const wasClosed = stage.hidden;
         clearSettle();
@@ -760,7 +774,12 @@
         rig.getBoundingClientRect();
         rig.style.transition = reduced ? "none" : "";
         stage.focus();
-        if (view === "sphere") bootSphere();
+        warmFull();
+        if (view === "sphere" || view === "grid") {
+            stage.classList.add("is-sphere");
+            setGrid(view === "grid");
+            bootSphere();
+        }
         placeThumb(wasClosed);
     }
 
@@ -856,7 +875,7 @@
         const work = works[shown];
         if (!work) return;
         if (painted !== shown) {
-            preview.src = work.src;
+            preview.src = work.card || work.src;
             preview.alt = work.name;
             frame.setAttribute("aria-label", "Open " + work.name);
             painted = shown;
@@ -915,13 +934,35 @@
         stopEdge();
     }
 
-    shots.addEventListener("pointermove", function (event) {
+    function insidePreview(x, y) {
+        if (shots.classList.contains("is-hot")) {
+            const box = card.getBoundingClientRect();
+            const rail = shots.getBoundingClientRect();
+            const left = Math.min(rail.right, box.left) - 8;
+            if (x >= left && x <= box.right + 10 && y >= box.top - 10 && y <= box.bottom + 10) return "card";
+        }
+        const rail = shots.getBoundingClientRect();
+        if (x >= rail.left - 16 && x <= rail.right + 10 && y >= rail.top - 24 && y <= rail.bottom + 24) return "rail";
+        return "";
+    }
+
+    function track(event) {
         if (event.pointerType === "touch") return;
-        engage(event.clientY);
+        const where = insidePreview(event.clientX, event.clientY);
+        if (where === "card") return;
+        if (where === "rail") engage(event.clientY);
+        else if (shots.classList.contains("is-hot")) release();
+    }
+
+    shots.addEventListener("pointermove", track);
+    window.addEventListener("pointermove", function (event) {
+        if (!shots.classList.contains("is-hot")) return;
+        track(event);
     });
 
     shots.addEventListener("pointerleave", function (event) {
         if (event.relatedTarget && shots.contains(event.relatedTarget)) return;
+        if (insidePreview(event.clientX, event.clientY)) return;
         release();
     });
 
@@ -1134,7 +1175,7 @@
     const litImg = plate.querySelector("img");
     let litAt = 0;
     const switcher = stage.querySelector(".view-switch");
-    let view = "hall";
+    let view = "grid";
     let focused = -1;
     let sourceEl = null;
     let camZ = 0;
@@ -1243,7 +1284,7 @@
             const end = Math.min(cards.length, cursor + 4);
             for (; cursor < end; cursor += 1) {
                 const img = cards[cursor].querySelector("img");
-                img.src = units[cursor].work.src;
+                img.src = units[cursor].work.card || units[cursor].work.src;
             }
             window.setTimeout(pump, 40);
         }
@@ -1363,8 +1404,14 @@
     var reelV = 0;
     var reelAim = null;
     var reelFrame = 0;
+    var reelStamp = 0;
     var reelDrag = null;
     var reelSkipClick = false;
+
+    function reelEase(t) {
+        t = Math.max(0, Math.min(1, t));
+        return t * t * (3 - 2 * t);
+    }
 
     function reelMetrics() {
         var host = rows.clientHeight || window.innerHeight;
@@ -1395,43 +1442,58 @@
             d -= n * Math.round(d / n);
             var ad = Math.abs(d);
             var fig = figs[i];
-            if (ad > 1.65) {
+            var scale = 1 - reelEase(Math.min(1, ad / 1.35)) * (1 - box.neighbor);
+            var fade = ad < 0.72 ? 1 : 1 - reelEase(Math.min(1, (ad - 0.72) / 0.95));
+            if (fade < 0.025) {
                 fig.style.visibility = "hidden";
                 fig.classList.remove("is-focus");
                 continue;
             }
-            var scale = ad >= 1 ? box.neighbor : 1 - ad * (1 - box.neighbor);
             fig.style.visibility = "";
             fig.style.width = box.cardW + "px";
             fig.style.height = box.cardH + "px";
-            fig.style.zIndex = String(20 - Math.round(ad * 4));
-            fig.style.opacity = ad < 0.2 ? "1" : "0.92";
+            fig.style.zIndex = String(20 - Math.round(ad * 8));
+            fig.style.opacity = fade.toFixed(3);
             fig.style.filter = "";
             fig.style.transform = "translate(-50%, -50%) translateY(" + (d * box.step).toFixed(1) + "px) scale(" + scale.toFixed(3) + ")";
             fig.classList.toggle("is-focus", ad < 0.45);
+            if (ad < 1.15) {
+                var shot = fig.querySelector("img");
+                if (shot && shot.dataset.full !== "1") {
+                    shot.dataset.full = "1";
+                    shot.dataset.src = units[i].work.src;
+                    swapWhenReady(shot, units[i].work.src);
+                }
+            }
         }
     }
 
-    function reelTick() {
+    function reelTick(now) {
         reelFrame = 0;
-        if (view !== "grid" || stage.hidden) return;
+        if (view !== "grid" || stage.hidden) {
+            reelStamp = 0;
+            return;
+        }
+        var dt = reelStamp ? Math.min(34, now - reelStamp) : 16;
+        reelStamp = now;
         var live = false;
         if (reelAim !== null) {
             var gap = reelAim - reel;
-            if (Math.abs(gap) < 0.004) {
+            if (Math.abs(gap) < 0.0015) {
                 reel = reelAim;
                 reelAim = null;
                 reelV = 0;
             } else {
-                reel += gap * (reduced ? 1 : 0.2);
+                reel += gap * (reduced ? 1 : (1 - Math.exp(-dt / 260)));
                 live = true;
             }
-        } else if (Math.abs(reelV) > 0.0012) {
-            reel += reelV;
-            reelV *= reduced ? 0 : 0.9;
+        } else if (Math.abs(reelV) > 0.00045) {
+            reel += reelV * (dt / 16);
+            reelV *= reduced ? 0 : Math.exp(-dt / 480);
             live = true;
-        } else if (Math.abs(reel - Math.round(reel)) > 0.004) {
+        } else if (Math.abs(reel - Math.round(reel)) > 0.0015) {
             reelAim = Math.round(reel);
+            reelV = 0;
             live = true;
         } else {
             reel = Math.round(reel);
@@ -1464,7 +1526,9 @@
                 img.alt = unit.work.name;
                 img.decoding = "async";
                 img.draggable = false;
-                img.src = unit.work.src;
+                img.src = unit.work.card || unit.work.src;
+                img.dataset.src = unit.work.src;
+                img.dataset.full = "0";
                 figure.append(img);
                 frag.append(figure);
             });

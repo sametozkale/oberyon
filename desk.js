@@ -205,10 +205,11 @@
     }
 
     function takeOver(switching) {
+        var first = !user;
         user = true;
         touring = false;
         tour = { phrase: 0, step: "type", index: 0, wait: 1.4 };
-        line = "";
+        if (first) line = "";
         if (!switching) setPower(1);
         write();
         window.clearTimeout(idleTimer);

@@ -1,0 +1,10 @@
+html,
+html * {
+    cursor: url("cursor.png") 0 0, url("cursor.svg") 0 0, auto !important;
+}
+
+input,
+textarea,
+[contenteditable="true"] {
+    cursor: text !important;
+}

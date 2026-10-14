@@ -27,7 +27,8 @@ if (!btn || !canvas || !chars || !icon) {
     const uniforms = {
         uRes: { value: new THREE.Vector2(1, 1) },
         uBorder: { value: 0 },
-        uFill: { value: 0 }
+        uFill: { value: 0 },
+        uSolid: { value: 0 }
     };
     const material = new THREE.ShaderMaterial({
         transparent: true,
@@ -46,6 +47,7 @@ if (!btn || !canvas || !chars || !icon) {
             uniform vec2 uRes;
             uniform float uBorder;
             uniform float uFill;
+            uniform float uSolid;
 
             float sdRoundBox(vec2 p, vec2 b, float r) {
                 vec2 q = abs(p) - b + r;
@@ -73,14 +75,14 @@ if (!btn || !canvas || !chars || !icon) {
             }
 
             vec2 strokeAt(float u, float seed, float hw, float hh) {
-                float turns = 4.0;
+                float turns = 6.0;
                 float fu = clamp(u, 0.0, 0.999) * turns;
                 float pass = floor(fu);
                 float t = fract(fu);
                 float going = mod(pass, 2.0) < 0.5 ? t : 1.0 - t;
                 float e = going * going * (3.0 - 2.0 * going);
-                float y = mix(hh * 0.42, -hh * 0.42, (pass + 0.5) / turns);
-                float x = mix(-hw * 0.9, hw * 0.9, e);
+                float y = mix(hh * 0.62, -hh * 0.62, (pass + 0.5) / turns);
+                float x = mix(-hw * 0.96, hw * 0.96, e);
                 float bow = sin(going * 3.14159) * hh * (mod(pass, 2.0) < 0.5 ? 0.55 : -0.38);
                 y += bow + sin(going * 11.0 + pass + seed) * 1.05;
                 x += sin(going * 7.5 + seed * 1.3) * 2.2;
@@ -92,8 +94,9 @@ if (!btn || !canvas || !chars || !icon) {
 
             float lay(vec2 p, float hw, float hh, float seed, float start, float span) {
                 float raw = clamp((uFill - start) / span, 0.0, 1.0);
+                if (raw <= 0.001) return 0.0;
                 float ink = 0.0;
-                const int N = 28;
+                const int N = 36;
                 for (int i = 0; i < N; i++) {
                     float u0 = float(i) / float(N);
                     float u1 = float(i + 1) / float(N);
@@ -119,9 +122,10 @@ if (!btn || !canvas || !chars || !icon) {
             }
 
             float pencil(vec2 p, float hw, float hh) {
-                float first = lay(p, hw, hh, 1.0, 0.0, 0.7);
-                float again = lay(p, hw, hh, 2.35, 0.46, 0.54);
-                return first + again;
+                float first = lay(p, hw, hh, 1.0, 0.0, 0.46);
+                float again = lay(p, hw, hh, 2.35, 0.28, 0.46);
+                float third = lay(p, hw, hh, 4.1, 0.56, 0.44);
+                return first + again + third;
             }
 
             void main() {
@@ -143,8 +147,7 @@ if (!btn || !canvas || !chars || !icon) {
                 float border = max(line * cover, nib) * step(0.001, uBorder);
                 float inside = 1.0 - smoothstep(-0.4, 0.35, d);
                 float ink = clamp(pencil(p, hw, hh), 0.0, 1.0);
-                float solid = smoothstep(0.94, 1.0, uFill);
-                float fill = inside * mix(clamp(ink, 0.0, 1.0), 1.0, solid);
+                float fill = inside * mix(clamp(ink, 0.0, 1.0), 1.0, uSolid);
                 float alpha = max(border * 0.92, fill);
                 vec3 wire = vec3(0.93, 0.97, 0.95);
                 vec3 paper = vec3(1.0);
@@ -172,6 +175,11 @@ if (!btn || !canvas || !chars || !icon) {
         return 1 - Math.pow(1 - x, 1.7);
     }
 
+    function easeInOut(t) {
+        const x = clamp01(t);
+        return x * x * (3 - 2 * x);
+    }
+
     let played = false;
 
     function play() {
@@ -182,15 +190,18 @@ if (!btn || !canvas || !chars || !icon) {
         const lead = 460;
         const borderDur = 1120;
         const fillAt = lead + borderDur + 140;
-        const fillDur = 1720;
+        const fillDur = 2600;
+        const solidAt = fillAt + fillDur + 80;
+        const solidDur = 1200;
 
         function frame(now) {
             const t = now - started;
             uniforms.uBorder.value = t < lead ? 0 : easeOut((t - lead) / borderDur);
             uniforms.uFill.value = t < fillAt ? 0 : clamp01((t - fillAt) / fillDur);
+            uniforms.uSolid.value = t < solidAt ? 0 : easeInOut((t - solidAt) / solidDur);
             renderer.render(scene, camera);
-            if (t < fillAt + fillDur) requestAnimationFrame(frame);
-            else window.setTimeout(typeLabel, 90);
+            if (t < solidAt + solidDur) requestAnimationFrame(frame);
+            else window.setTimeout(typeLabel, 180);
         }
 
         requestAnimationFrame(frame);
