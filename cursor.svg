@@ -1,4 +1,3 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 16 16">
-  <polygon points="0,0 15,0 0,15" fill="#c0e953"/>
-  <polygon points="15,0 11.6,1.2 1.2,11.6 0,15" fill="#1a1a1a"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 60 60">
+  <path fill="#c0e953" fill-rule="evenodd" d="M3 0H57A3 3 0 0 1 60 3V57A3 3 0 0 1 57 60H3A3 3 0 0 1 0 57V3A3 3 0 0 1 3 0ZM74 4A70 70 0 1 0 74 144A70 70 0 1 0 74 4Z"/>
 </svg>

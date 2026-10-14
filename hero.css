@@ -1399,7 +1399,7 @@ body.is-in .hero-cta {
     display: flex;
     align-items: center;
     gap: 4px;
-    padding: 0 6px;
+    padding: 6px;
     border-radius: 999px;
     isolation: isolate;
     background: rgba(18, 60, 48, 0.5);
@@ -1488,11 +1488,8 @@ body.is-in .hero-cta {
 .dock-mark::before {
     content: "";
     position: absolute;
-    left: 2px;
-    top: 2px;
-    width: 32px;
-    height: 32px;
-    border-radius: 999px;
+    inset: 0;
+    border-radius: inherit;
     background: transparent;
     pointer-events: none;
     transition: background 0.28s var(--ease);

@@ -1,6 +1,6 @@
 html,
 html * {
-    cursor: url("cursor.png") 0 0, url("cursor.svg") 0 0, auto !important;
+    cursor: url("cursor.svg?v=3") 0 0, url("cursor.png?v=3") 0 0, auto !important;
 }
 
 input,
