@@ -1131,20 +1131,28 @@
                 stepLit(-1);
             } else if (event.key === "ArrowRight") {
                 event.preventDefault();
+                autoSpin = false;
                 turn(8, 0);
                 velX = 0;
                 velY = 0;
             } else if (event.key === "ArrowLeft") {
                 event.preventDefault();
+                autoSpin = false;
                 turn(-8, 0);
                 velX = 0;
                 velY = 0;
             } else if (event.key === "ArrowDown") {
                 event.preventDefault();
-                dolly = Math.min(1, dolly + 0.08);
+                autoSpin = false;
+                turn(0, 8);
+                velX = 0;
+                velY = 0;
             } else if (event.key === "ArrowUp") {
                 event.preventDefault();
-                dolly = Math.max(0, dolly - 0.08);
+                autoSpin = false;
+                turn(0, -8);
+                velX = 0;
+                velY = 0;
             }
             return;
         }
@@ -1196,13 +1204,28 @@
     const tilt0 = -4 * Math.PI / 180;
     let R = [1, 0, 0, 0, Math.cos(tilt0), -Math.sin(tilt0), 0, Math.sin(tilt0), Math.cos(tilt0)];
 
-    const golden = Math.PI * (3 - Math.sqrt(5));
+    const INTRO_DELAY = 1.35;
+    const INTRO_ORBIT = 2.7;
+    const INTRO_STAGGER = 1.5;
+    const INTRO_FADE = 1.2;
+    const INTRO_ENTER = 0.82;
+    const INTRO_END = INTRO_DELAY + INTRO_ORBIT;
+    let introAt = 0;
+    let introOn = false;
+    let introYaw = 0;
+    let autoSpin = true;
+    let sphereScale = 1;
+    let eyeRatio = 3;
+    let tilePx = 160;
+
     works.forEach(function (work, i) {
-        const y = 1 - (2 * i + 1) / works.length;
-        const rad = Math.sqrt(Math.max(0, 1 - y * y));
-        const theta = golden * i;
-        const x = Math.cos(theta) * rad;
-        const z = Math.sin(theta) * rad;
+        const n = works.length;
+        const phi = Math.acos(-1 + (2 * i) / n);
+        const theta = Math.sqrt(n * Math.PI) * phi;
+        const y = Math.cos(phi);
+        const ring = Math.sin(phi);
+        const x = ring * Math.sin(theta);
+        const z = ring * Math.cos(theta);
         units.push({
             x: x,
             y: y,
@@ -1248,13 +1271,14 @@
         const floor = width <= 380 ? 96 : width <= 640 ? 112 : 140;
         radius = Math.max(floor, Math.min(440, fitH, fitW));
         perspective = width <= 380 ? 620 : width <= 640 ? 760 : width <= 900 ? 920 : 1150;
-        const cw = Math.round(radius * cardFraction());
+        tilePx = Math.round(radius * 0.44);
         sphere.style.setProperty("--persp", perspective + "px");
-        sphere.style.setProperty("--cw", cw + "px");
+        sphere.style.setProperty("--cw", tilePx + "px");
         units.forEach(function (unit, i) {
             const card = cards[i];
             if (!card) return;
-            card.style.transform = "rotateY(" + unit.lon.toFixed(3) + "deg) rotateX(" + unit.lat.toFixed(3) + "deg) translateZ(" + radius.toFixed(2) + "px)";
+            card._home = "rotateY(" + unit.lon.toFixed(3) + "deg) rotateX(" + unit.lat.toFixed(3) + "deg) translateZ(" + radius.toFixed(2) + "px)";
+            if (!card._parked) card.style.transform = card._home;
         });
     }
 
@@ -1266,13 +1290,19 @@
             const card = document.createElement("div");
             card.className = "sphere-card";
             card.dataset.idx = String(i);
-            const figure = document.createElement("figure");
-            const img = document.createElement("img");
-            img.alt = unit.work.name;
-            img.decoding = "async";
-            img.addEventListener("load", function () { img.style.setProperty("--seen", "1"); });
-            figure.append(img);
-            card.append(figure);
+            ["", "sphere-in"].forEach(function (cls) {
+                const figure = document.createElement("figure");
+                if (cls) {
+                    figure.className = cls;
+                    figure.setAttribute("aria-hidden", "true");
+                }
+                const img = document.createElement("img");
+                img.alt = cls ? "" : unit.work.name;
+                img.decoding = "async";
+                img.addEventListener("load", function () { card.style.setProperty("--seen", "1"); });
+                figure.append(img);
+                card.append(figure);
+            });
             cards.push(card);
             frag.append(card);
         });
@@ -1283,8 +1313,11 @@
             if (cursor >= cards.length) return;
             const end = Math.min(cards.length, cursor + 4);
             for (; cursor < end; cursor += 1) {
-                const img = cards[cursor].querySelector("img");
-                img.src = units[cursor].work.card || units[cursor].work.src;
+                const src = units[cursor].work.card || units[cursor].work.src;
+                cards[cursor].querySelectorAll("img").forEach(function (img) {
+                    img.src = src;
+                    if (img.complete && img.naturalWidth) cards[cursor].style.setProperty("--seen", "1");
+                });
             }
             window.setTimeout(pump, 40);
         }
@@ -1332,7 +1365,52 @@
         R = [nx0, nx1, nx2, ny0, ny1, ny2, nx1 * ny2 - nx2 * ny1, nx2 * ny0 - nx0 * ny2, nx0 * ny1 - nx1 * ny0];
     }
 
-    function paintSphere() {
+    function introEase(t) {
+        t = Math.max(0, Math.min(1, t));
+        return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+    }
+
+    function resetPose(yawDeg, pitchDeg) {
+        R = [1, 0, 0, 0, 1, 0, 0, 0, 1];
+        turn(yawDeg, pitchDeg);
+    }
+
+    function beginSphereIntro() {
+        introAt = performance.now();
+        introYaw = 0;
+        autoSpin = true;
+        velX = 0;
+        velY = 0;
+        dolly = 0;
+        camZ = 0;
+        if (reduced) {
+            introOn = false;
+            sphereScale = 1;
+            eyeRatio = 0.48;
+            resetPose(0, 0);
+            return;
+        }
+        introOn = true;
+        sphereScale = 0.7;
+        eyeRatio = 3;
+        resetPose(0, -90);
+    }
+
+    function paintSphere(now) {
+        const elapsed = introAt ? (now - introAt) / 1000 : INTRO_END + INTRO_ENTER;
+        if (introOn) {
+            const orbit = introEase((elapsed - INTRO_DELAY) / INTRO_ORBIT);
+            const enter = introEase((elapsed - INTRO_END) / INTRO_ENTER);
+            const sphereElapsed = Math.max(0, elapsed - INTRO_DELAY);
+            const spin = (0.05 + (0.001 - 0.05) * introEase(Math.min(sphereElapsed / 3, 1))) * 180 / Math.PI;
+            introYaw += spin;
+            resetPose(introYaw, -90 * (1 - orbit));
+            sphereScale = 0.7 + 0.3 * enter;
+            eyeRatio = 3 + (0.48 - 3) * enter;
+            if (elapsed >= INTRO_END + INTRO_ENTER) introOn = false;
+        } else if (!dragging && focused < 0 && autoSpin && !reduced) {
+            turn(0.001 * 180 / Math.PI, 0);
+        }
         if (!dragging && focused < 0 && (velX || velY)) {
             turn(velX, velY);
             velX *= reduced ? 0 : 0.9;
@@ -1340,25 +1418,47 @@
             if (Math.abs(velX) < 0.012) velX = 0;
             if (Math.abs(velY) < 0.012) velY = 0;
         }
-        const targetZ = dolly * Math.min(64, radius * 0.12);
-        camZ += (targetZ - camZ) * 0.075;
-        world.style.transform = "translateZ(" + camZ.toFixed(2) + "px) " + cssRot(R);
-        stage.classList.toggle("is-deep", dolly > 0.12);
-        const near = perspective * 0.66;
-        const shade = 1 - Math.min(1, dolly * 1.6);
+        const eye = radius * eyeRatio;
+        const pull = perspective - eye;
+        world.style.transform = "translateZ(" + pull.toFixed(2) + "px) scale(" + sphereScale.toFixed(4) + ") " + cssRot(R);
+        const tileScale = eye < radius ? 0.62 : 1;
+        const tileNow = Math.round(tilePx * tileScale);
+        if (sphere._tile !== tileNow) {
+            sphere._tile = tileNow;
+            sphere.style.setProperty("--cw", tileNow + "px");
+        }
+        let worldMatrix = null;
+        try { worldMatrix = new DOMMatrix(world.style.transform); } catch (err) { worldMatrix = new DOMMatrix(); }
+        stage.classList.remove("is-deep");
         units.forEach(function (unit, i) {
-            const zf = R[6] * unit.cssX + R[7] * unit.cssY + R[8] * unit.cssZ;
-            const light = Math.pow(Math.max(0, zf), 1.45);
-            let fade = 1;
-            const absZ = zf * radius + camZ;
-            if (absZ > near) fade = Math.max(0, 1 - (absZ - near) / 190);
-            let dim = shade * (1 - light) * 0.82;
-            if (focused >= 0) {
-                dim = Math.min(1, dim + 0.78);
-                if (i === focused) fade = 0;
-            }
+            const light = 1;
+            const shown = introAt ? introEase((elapsed - (INTRO_DELAY + (INTRO_STAGGER / works.length) * i)) / INTRO_FADE) : 1;
+            let fade = shown;
+            if (focused >= 0) fade = i === focused ? 0 : shown * 0.35;
             const card = cards[i];
-            const seen = card.querySelector("img").style.getPropertyValue("--seen") === "1";
+            const shownTile = tilePx * sphereScale * (eye < radius ? 0.62 : 1);
+            let behind = false;
+            if (card._home) {
+                const home = new DOMMatrix(card._home);
+                const point = worldMatrix.transformPoint(new DOMPoint(home.m41, home.m42, home.m43));
+                const dist = perspective - point.z;
+                behind = dist < 64;
+                if (!behind && eye < radius) {
+                    const halfX = shownTile * 0.5 * perspective / dist;
+                    const halfY = halfX * 816 / 1100;
+                    const sx = point.x * perspective / dist;
+                    const sy = point.y * perspective / dist;
+                    const limitX = stage.clientWidth * 0.5 - 20;
+                    const limitY = stage.clientHeight * 0.5 - 20;
+                    behind = Math.abs(sx) + halfX > limitX || Math.abs(sy) + halfY > limitY;
+                }
+            }
+            if (card._parked !== (behind ? 1 : 0)) {
+                card._parked = behind ? 1 : 0;
+                card.style.visibility = behind ? "hidden" : "visible";
+                card.style.transform = behind ? "scale(0)" : (card._home || "");
+            }
+            const seen = card.style.getPropertyValue("--seen") === "1";
             const nextFade = (seen ? fade : 0);
             if (card._fade !== nextFade) {
                 card._fade = nextFade;
@@ -1369,12 +1469,12 @@
                 card._lit = nextLit;
                 card.style.setProperty("--lit", nextLit.toFixed(3));
             }
-            const nextDim = dim;
+            const nextDim = 0;
             if (card._dim !== nextDim) {
                 card._dim = nextDim;
                 card.style.setProperty("--d", nextDim.toFixed(3));
             }
-            const hit = nextFade < 0.08 ? "none" : "";
+            const hit = behind || nextFade < 0.08 ? "none" : "";
             if (card._hit !== hit) {
                 card._hit = hit;
                 card.style.pointerEvents = hit;
@@ -1382,21 +1482,22 @@
         });
     }
 
-    function sphereLoop() {
+    function sphereLoop(now) {
         if (stage.hidden || view !== "sphere") {
             raf = 0;
             return;
         }
-        paintSphere();
+        paintSphere(now);
         raf = window.requestAnimationFrame(sphereLoop);
     }
 
     function bootSphere() {
         buildSphere();
-        measureSphere(false);
+        measureSphere(true);
+        beginSphereIntro();
         sphere.hidden = false;
-        window.requestAnimationFrame(function () { sphere.classList.add("is-in"); });
-        paintSphere();
+        sphere.classList.add("is-in");
+        paintSphere(performance.now());
         if (!raf) raf = window.requestAnimationFrame(sphereLoop);
     }
 
@@ -1586,11 +1687,40 @@
     }
 
     function placePlate() {
+        const host = stage.getBoundingClientRect();
+        if (view === "sphere") {
+            const side = Math.round(Math.min(host.width * 0.86, host.height * 0.8, 880));
+            plate.style.left = ((host.width - side) / 2) + "px";
+            plate.style.top = (host.height * 0.48 - side / 2) + "px";
+            plate.style.width = side + "px";
+            plate.style.height = side + "px";
+            return;
+        }
         const box = previewBox();
         plate.style.left = box.left + "px";
         plate.style.top = box.top + "px";
         plate.style.width = box.width + "px";
         plate.style.height = box.height + "px";
+    }
+
+    function flyFrom(from) {
+        const fromBox = from && from.isConnected ? from.getBoundingClientRect() : null;
+        const plateBox = plate.getBoundingClientRect();
+        const sane = fromBox && fromBox.width >= 12 && fromBox.height >= 12
+            && fromBox.width < window.innerWidth * 0.92
+            && fromBox.height < window.innerHeight * 0.92
+            && fromBox.right > 0 && fromBox.bottom > 0
+            && fromBox.left < window.innerWidth && fromBox.top < window.innerHeight;
+        if (!sane) {
+            plate.style.transform = "scale(0.94)";
+            plate.style.opacity = "0";
+            return;
+        }
+        const dx = (fromBox.left + fromBox.width / 2) - (plateBox.left + plateBox.width / 2);
+        const dy = (fromBox.top + fromBox.height / 2) - (plateBox.top + plateBox.height / 2);
+        const scale = Math.max(0.08, Math.min(1.35, fromBox.width / Math.max(1, plateBox.width)));
+        plate.style.transform = "translate(" + dx.toFixed(1) + "px, " + dy.toFixed(1) + "px) scale(" + scale.toFixed(4) + ")";
+        plate.style.opacity = "0";
     }
 
     function pinLitNav() {
@@ -1652,18 +1782,14 @@
         litImg.alt = work.name;
         litImg.dataset.src = work.src;
         stage.setAttribute("aria-label", work.name);
+        const preview = from && from.querySelector ? from.querySelector("img") : null;
+        if (preview && preview.getAttribute("src")) litImg.src = preview.getAttribute("src");
         swapWhenReady(litImg, work.src);
         lit.hidden = false;
         stage.classList.add("is-lit");
         placePlate();
-        const fromBox = from.getBoundingClientRect();
-        const plateBox = plate.getBoundingClientRect();
-        const dx = (fromBox.left + fromBox.width / 2) - (plateBox.left + plateBox.width / 2);
-        const dy = (fromBox.top + fromBox.height / 2) - (plateBox.top + plateBox.height / 2);
-        const scale = Math.max(0.04, fromBox.width / Math.max(1, plateBox.width));
         plate.style.transition = "none";
-        plate.style.transform = "translate(" + dx.toFixed(1) + "px, " + dy.toFixed(1) + "px) scale(" + scale.toFixed(4) + ")";
-        plate.style.opacity = "0";
+        flyFrom(from);
         plate.getBoundingClientRect();
         plate.style.transition = "";
         plate.style.transform = "";
@@ -1683,17 +1809,7 @@
         stage.classList.remove("is-lit");
         stage.setAttribute("aria-label", "Selected work");
         hideLitNav();
-        if (from && from.isConnected) {
-            const fromBox = from.getBoundingClientRect();
-            const plateBox = plate.getBoundingClientRect();
-            const dx = (fromBox.left + fromBox.width / 2) - (plateBox.left + plateBox.width / 2);
-            const dy = (fromBox.top + fromBox.height / 2) - (plateBox.top + plateBox.height / 2);
-            const scale = Math.max(0.04, fromBox.width / Math.max(1, plateBox.width));
-            plate.style.transform = "translate(" + dx.toFixed(1) + "px, " + dy.toFixed(1) + "px) scale(" + scale.toFixed(4) + ")";
-            plate.style.opacity = "0";
-        } else {
-            plate.style.opacity = "0";
-        }
+        flyFrom(from);
         window.setTimeout(function () {
             lit.hidden = true;
             plate.style.transition = "none";
@@ -1742,6 +1858,38 @@
         setView(button.getAttribute("data-view"));
     });
 
+    function openWorkView(next) {
+        if (view !== next) setView(next);
+        if (stage.hidden) open(0);
+    }
+
+    function openSphere() {
+        openWorkView("sphere");
+    }
+
+    function openGrid() {
+        openWorkView("grid");
+    }
+
+    function openHall() {
+        openWorkView("hall");
+    }
+
+    document.addEventListener("click", function (event) {
+        const link = event.target.closest("a[href='#sphere'], a[href='#grid'], a[href='#hall']");
+        if (!link) return;
+        const hash = link.getAttribute("href");
+        event.preventDefault();
+        if (hash === "#grid") openGrid();
+        else if (hash === "#hall") openHall();
+        else openSphere();
+        if (history.replaceState) history.replaceState(null, "", hash);
+    });
+
+    if (location.hash === "#sphere") openSphere();
+    if (location.hash === "#grid") openGrid();
+    if (location.hash === "#hall") openHall();
+
     lit.addEventListener("click", function () {
         if (performance.now() - litAt < 450) return;
         closeLit();
@@ -1765,7 +1913,8 @@
     });
 
     sphereStage.addEventListener("pointerdown", function (event) {
-        if (event.button !== 0 || focused >= 0 || stage.classList.contains("is-grid")) return;
+        if (introOn || event.button !== 0 || focused >= 0 || stage.classList.contains("is-grid")) return;
+        autoSpin = false;
         event.stopPropagation();
         ptr = {
             id: event.pointerId,
@@ -1782,7 +1931,7 @@
         velY = 0;
         dragging = true;
         stage.classList.add("is-drag");
-        sphereStage.setPointerCapture(event.pointerId);
+        try { sphereStage.setPointerCapture(event.pointerId); } catch (err) { /* synthetic clicks */ }
     });
 
     sphereStage.addEventListener("pointermove", function (event) {
@@ -1815,11 +1964,8 @@
     sphereStage.addEventListener("pointercancel", endSpherePointer);
 
     sphere.addEventListener("wheel", function (event) {
-        if (view !== "sphere" || stage.hidden || focused >= 0) return;
+        if (view !== "sphere" || stage.hidden) return;
         event.preventDefault();
-        event.stopPropagation();
-        const delta = Math.max(-80, Math.min(80, event.deltaY));
-        dolly = Math.min(1, Math.max(0, dolly + delta / 700));
     }, { passive: false });
 
     window.addEventListener("resize", function () {

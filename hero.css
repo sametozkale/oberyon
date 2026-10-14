@@ -117,7 +117,7 @@ html.is-edge .mark-band {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 152px 24px 160px;
+    padding: 104px 24px 160px;
     text-align: center;
 }
 
@@ -215,7 +215,7 @@ html.is-edge .mark-band {
 
 @media (max-width: 800px) {
     .moat {
-        padding: 104px 20px 112px;
+        padding: 72px 20px 112px;
     }
 
     .moat-mark {
@@ -2955,7 +2955,7 @@ span.shot-line {
     display: flex;
     gap: 2px;
     padding: 3px;
-    border: 1px solid rgba(255, 255, 255, 0.22);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 999px;
     background: rgba(18, 60, 48, 0.45);
     -webkit-backdrop-filter: blur(14px);
@@ -3062,8 +3062,14 @@ span.shot-line {
 }
 
 .shot-stage.is-lit:not(.is-grid) .sphere-stage {
-    opacity: 0.34;
+    opacity: 1;
     transition: opacity 0.55s ease;
+}
+
+.shot-stage.is-sphere:not(.is-grid) .sphere-plate {
+    border-radius: 0;
+    border-color: transparent;
+    box-shadow: 0 18px 50px rgba(6, 18, 14, 0.28);
 }
 
 .sphere-world {
@@ -3090,51 +3096,37 @@ span.shot-line {
     top: 0;
     left: 0;
     width: var(--cw);
-    height: calc(var(--cw) / 1.5);
-    margin: calc(var(--cw) / -3) 0 0 calc(var(--cw) / -2);
+    height: calc(var(--cw) * 816 / 1100);
+    margin: calc(var(--cw) * -816 / 2200) 0 0 calc(var(--cw) / -2);
     transform-style: preserve-3d;
-    backface-visibility: hidden;
+    backface-visibility: visible;
     cursor: pointer;
 }
 
 .sphere-card figure {
-    position: relative;
-    width: 100%;
-    height: 100%;
+    position: absolute;
+    inset: 0;
     margin: 0;
     overflow: hidden;
-    border-radius: 12px;
-    background: #f4f6f5;
-    box-shadow: 0 12px 28px rgba(6, 18, 14, 0.28);
-    transition: transform 0.5s var(--spin);
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
 }
 
-.sphere-card:hover figure {
-    transform: scale(1.045);
+.sphere-card figure.sphere-in {
+    transform: rotateY(180deg) translateZ(1px);
 }
 
 .sphere-card img {
     display: block;
     width: 100%;
     height: 100%;
-    object-fit: contain;
+    object-fit: cover;
     opacity: var(--fade, 0);
-    filter: brightness(calc(0.5 + var(--lit, 0) * 0.62));
     pointer-events: none;
-}
-
-.sphere.is-in .sphere-card img {
-    transition: opacity 0.8s ease-out;
-}
-
-.sphere-card figure::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: 12px;
-    background: rgba(18, 60, 48, var(--d, 0));
-    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16);
-    pointer-events: none;
+    backface-visibility: visible;
 }
 
 .sphere-vig {
@@ -3142,8 +3134,7 @@ span.shot-line {
     inset: 0;
     z-index: 3;
     pointer-events: none;
-    background: radial-gradient(ellipse 88% 92% at 50% 50%, transparent 48%, rgba(0, 0, 0, 0.26) 80%, rgba(0, 0, 0, 0.72) 100%);
-    transition: opacity 0.6s ease;
+    opacity: 0;
 }
 
 .shot-stage.is-grid .sphere-vig,
