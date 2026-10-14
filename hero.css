@@ -3100,6 +3100,7 @@ span.shot-line {
     margin: calc(var(--cw) * -816 / 2200) 0 0 calc(var(--cw) / -2);
     transform-style: preserve-3d;
     backface-visibility: visible;
+    pointer-events: none;
     cursor: pointer;
 }
 
@@ -3111,6 +3112,7 @@ span.shot-line {
     border-radius: var(--br, 14px);
     background: transparent;
     box-shadow: none;
+    pointer-events: auto;
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
 }
@@ -3119,12 +3121,43 @@ span.shot-line {
     transform: rotateY(180deg) translateZ(1px);
 }
 
+.sphere.is-open .sphere-world {
+    z-index: 0;
+}
+
 .sphere-card.is-facing {
+    z-index: 8;
     transform-style: flat;
+    transform-origin: center center;
+    transition: transform 0.85s cubic-bezier(0.45, 0.05, 0.2, 1);
+}
+
+.sphere-card.is-facing.is-returning {
+    transition-duration: 0.62s;
+}
+
+.sphere-card.is-facing figure {
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    border-radius: 12px;
+    background: #f4f6f5;
+    box-shadow: 0 12px 28px rgba(6, 18, 14, 0.2);
+}
+
+.shot-stage.is-sphere:has(.sphere-card.is-facing) {
+    cursor: default;
+}
+
+.shot-stage.is-sphere:has(.sphere-card.is-facing) .hall-nav {
+    visibility: visible;
 }
 
 .sphere-card.is-facing figure.sphere-in {
     display: none;
+}
+
+.sphere-card.is-facing img,
+.sphere.is-open .sphere-card img {
+    transition-duration: 0.2s;
 }
 
 .sphere-card img {
@@ -3282,6 +3315,7 @@ span.shot-line {
 
 @media (prefers-reduced-motion: reduce) {
     .sphere-card figure,
+    .sphere-card.is-facing,
     .sphere-plate,
     .sphere-grid,
     .sphere-vig {

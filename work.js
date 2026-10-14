@@ -627,12 +627,15 @@
     let navTimer = 0;
 
     function navReady() {
+        if (view === "sphere") return held >= 0 && !sphereReturning;
         return front && !settling && !front.classList.contains("is-returning") && stage.classList.contains("is-viewing");
     }
 
     function pinNav() {
         if (!navReady()) return false;
-        const box = front.getBoundingClientRect();
+        const card = view === "sphere" ? sphere.querySelector(".sphere-card.is-facing") : front;
+        if (!card) return false;
+        const box = card.getBoundingClientRect();
         const host = stage.getBoundingClientRect();
         if (box.width < 2) return false;
         nav.style.left = (box.left - host.left + box.width / 2) + "px";
@@ -671,12 +674,12 @@
     nextBtn.addEventListener("pointerdown", function (event) { event.stopPropagation(); });
     prevBtn.addEventListener("click", function (event) {
         event.stopPropagation();
-        if (view === "sphere" && focused >= 0) stepLit(-1);
+        if (view === "sphere" && held >= 0) stepSphere(-1);
         else stepFront(-1);
     });
     nextBtn.addEventListener("click", function (event) {
         event.stopPropagation();
-        if (view === "sphere" && focused >= 0) stepLit(1);
+        if (view === "sphere" && held >= 0) stepSphere(1);
         else stepFront(1);
     });
     window.addEventListener("resize", function () {
@@ -755,6 +758,11 @@
             if (index < works.length) window.setTimeout(step, 70);
         }
         step();
+    }
+
+    function openInSphere(i) {
+        if (view !== "sphere") setView("sphere");
+        open(i);
     }
 
     function open(i) {
@@ -978,12 +986,12 @@
             paint();
         });
         line.addEventListener("click", function () {
-            open(Math.round(shown));
+            openInSphere(Math.round(shown));
         });
     });
 
     frame.addEventListener("click", function () {
-        open(Math.round(shown));
+        openInSphere(Math.round(shown));
     });
 
     back.addEventListener("pointerdown", function (event) {
@@ -991,7 +999,12 @@
     });
 
     back.addEventListener("click", function () {
-        if (view === "sphere" || view === "grid") {
+        if (view === "sphere") {
+            if (held >= 0) closeSpherePreview();
+            else close();
+            return;
+        }
+        if (view === "grid") {
             if (focused >= 0) closeLit();
             else close();
             return;
@@ -1121,14 +1134,14 @@
         if (view === "sphere") {
             if (event.key === "Escape") {
                 event.preventDefault();
-                if (focused >= 0) focused = -1;
+                if (held >= 0) closeSpherePreview();
                 else close();
-            } else if (focused >= 0 && (event.key === "ArrowRight" || event.key === "ArrowDown")) {
+            } else if (held >= 0 && (event.key === "ArrowRight" || event.key === "ArrowDown")) {
                 event.preventDefault();
-                focused = (focused + 1) % units.length;
-            } else if (focused >= 0 && (event.key === "ArrowLeft" || event.key === "ArrowUp")) {
+                stepSphere(1);
+            } else if (held >= 0 && (event.key === "ArrowLeft" || event.key === "ArrowUp")) {
                 event.preventDefault();
-                focused = (focused - 1 + units.length) % units.length;
+                stepSphere(-1);
             } else if (event.key === "ArrowRight") {
                 event.preventDefault();
                 turn(8, 0);
@@ -1215,6 +1228,8 @@
     let tilePx = 160;
     let pickT = 0;
     let pickIndex = -1;
+    let held = -1;
+    let sphereReturning = false;
     let sphereStamp = 0;
 
     works.forEach(function (work, i) {
@@ -1395,41 +1410,167 @@
         resetPose(0, -90);
     }
 
+    function hallFrame() {
+        const narrow = stage.clientWidth <= 980;
+        const card = narrow ? 240 : 440;
+        const persp = narrow ? 620 : 780;
+        const scale = persp / (persp - 100);
+        const w = card * scale;
+        const h = w * 816 / 1100;
+        return {
+            w: w,
+            h: h,
+            left: (sphereStage.clientWidth - w) / 2,
+            top: sphereStage.clientHeight * 0.46 - h / 2
+        };
+    }
+
+    function projectCard(card) {
+        const hostW = sphereStage.clientWidth;
+        const hostH = sphereStage.clientHeight;
+        let matrix;
+        try { matrix = new DOMMatrix(world.style.transform); } catch (err) { matrix = new DOMMatrix(); }
+        const home = new DOMMatrix(card._home || "");
+        const hw = tilePx * 0.5;
+        const hh = hw * 816 / 1100;
+        function screen(x, y) {
+            const p = matrix.transformPoint(home.transformPoint(new DOMPoint(x, y, 0)));
+            const dist = perspective - p.z;
+            if (dist < 40) return null;
+            return {
+                x: hostW / 2 + p.x * perspective / dist,
+                y: hostH / 2 + p.y * perspective / dist
+            };
+        }
+        const tl = screen(-hw, -hh);
+        const tr = screen(hw, -hh);
+        const bl = screen(-hw, hh);
+        const br = screen(hw, hh);
+        if (!tl || !tr || !bl || !br) return null;
+        const width = (Math.hypot(tr.x - tl.x, tr.y - tl.y) + Math.hypot(br.x - bl.x, br.y - bl.y)) / 2;
+        const height = (Math.hypot(bl.x - tl.x, bl.y - tl.y) + Math.hypot(br.x - tr.x, br.y - tr.y)) / 2;
+        if (width < 8 || height < 8) return null;
+        const origin = matrix.transformPoint(home.transformPoint(new DOMPoint(0, 0, 0)));
+        const normal = matrix.transformPoint(home.transformPoint(new DOMPoint(0, 0, 1)));
+        const outerFacing = normal.z - origin.z >= 0;
+        const angle = outerFacing
+            ? Math.atan2(tr.y - tl.y, tr.x - tl.x)
+            : Math.atan2(tl.y - tr.y, tl.x - tr.x);
+        return {
+            cx: (tl.x + tr.x + bl.x + br.x) / 4,
+            cy: (tl.y + tr.y + bl.y + br.y) / 4,
+            w: width,
+            h: height,
+            angle: angle
+        };
+    }
+
+    function cardUnderPoint(clientX, clientY) {
+        const host = sphereStage.getBoundingClientRect();
+        const x = clientX - host.left;
+        const y = clientY - host.top;
+        let matrix;
+        try { matrix = new DOMMatrix(world.style.transform); } catch (err) { matrix = new DOMMatrix(); }
+        const hw = tilePx * 0.5;
+        const hh = hw * 816 / 1100;
+        let best = null;
+        let bestDist = Infinity;
+        cards.forEach(function (card) {
+            if (!card._home || card.style.visibility === "hidden" || card._hit === "none") return;
+            const home = new DOMMatrix(card._home);
+            function screen(px, py) {
+                const p = matrix.transformPoint(home.transformPoint(new DOMPoint(px, py, 0)));
+                const dist = perspective - p.z;
+                if (dist < 40) return null;
+                return {
+                    x: host.width / 2 + p.x * perspective / dist,
+                    y: host.height / 2 + p.y * perspective / dist,
+                    dist: dist
+                };
+            }
+            const quad = [screen(-hw, -hh), screen(hw, -hh), screen(hw, hh), screen(-hw, hh)];
+            if (quad.some(function (point) { return !point; })) return;
+            function crosses(px, py) {
+                return quad.map(function (a, i) {
+                    const b = quad[(i + 1) % 4];
+                    return (b.x - a.x) * (py - a.y) - (b.y - a.y) * (px - a.x);
+                });
+            }
+            const midX = (quad[0].x + quad[1].x + quad[2].x + quad[3].x) / 4;
+            const midY = (quad[0].y + quad[1].y + quad[2].y + quad[3].y) / 4;
+            const expected = crosses(midX, midY).find(function (value) { return Math.abs(value) > 0.5; }) || 1;
+            if (crosses(x, y).some(function (value) { return value * expected < -0.5; })) return;
+            const dist = (quad[0].dist + quad[1].dist + quad[2].dist + quad[3].dist) / 4;
+            if (dist < bestDist) {
+                bestDist = dist;
+                best = card;
+            }
+        });
+        return best;
+    }
+
     function placeFacing(card) {
-        const aspect = 816 / 1100;
-        let w = Math.max(240, stage.clientWidth * 0.9);
-        let h = w * aspect;
-        const maxH = Math.max(180, stage.clientHeight * 0.86);
-        if (h > maxH) {
-            h = maxH;
-            w = h / aspect;
+        if (card._flew) return;
+        const from = projectCard(card);
+        const frame = hallFrame();
+        if (!from) {
+            held = -1;
+            focused = -1;
+            pickT = 0;
+            pickIndex = -1;
+            return;
         }
-        const next = Math.round(w) + "x" + Math.round(h);
+        card._flew = 1;
+        const dx = from.cx - (frame.left + frame.w / 2);
+        const dy = from.cy - (frame.top + frame.h / 2);
+        const scale = Math.max(0.12, Math.min(from.w / frame.w, from.h / frame.h));
         if (card.parentElement !== sphereStage) sphereStage.appendChild(card);
+        sphere.classList.add("is-open");
         card.classList.add("is-facing");
-        if (card._flat !== next) {
-            card._flat = next;
-            card.style.width = Math.round(w) + "px";
-            card.style.height = Math.round(h) + "px";
-            card.style.margin = "0";
-            card.style.left = "50%";
-            card.style.top = "46%";
-            card.style.zIndex = "5";
-        }
-        card.style.transform = "translate(-50%, -50%)";
+        card.style.transition = "none";
+        card.style.margin = "0";
+        card.style.zIndex = "8";
+        card.style.left = frame.left + "px";
+        card.style.top = frame.top + "px";
+        card.style.width = frame.w + "px";
+        card.style.height = frame.h + "px";
+        card.style.transformOrigin = "center center";
+        card.style.transform = "translate(" + dx.toFixed(2) + "px, " + dy.toFixed(2) + "px) rotate(" + from.angle.toFixed(4) + "rad) scale(" + scale.toFixed(4) + ")";
+        card.getBoundingClientRect();
+        card.style.transition = "";
+        card.style.transform = "translate(0px, 0px) rotate(0rad) scale(1)";
+        coverNeighbors(card);
+        armNav();
+    }
+
+    function coverNeighbors(card) {
+        const from = projectCard(card);
+        cards.forEach(function (other) {
+            other._cover = 0;
+            if (!from || other === card || !other._home) return;
+            const spot = projectCard(other);
+            if (!spot) return;
+            const across = Math.abs(spot.cx - from.cx) < (from.w + spot.w) * 0.38;
+            const down = Math.abs(spot.cy - from.cy) < (from.h + spot.h) * 0.38;
+            if (across && down) other._cover = 1;
+        });
     }
 
     function restoreCard(card) {
         if (card.parentElement !== orb) orb.appendChild(card);
         card._flat = "";
-        card.classList.remove("is-facing");
+        card._flew = 0;
+        card.classList.remove("is-facing", "is-returning");
         card._posed = 0;
         card._sharp = false;
+        card.style.transition = "none";
         card.style.transform = card._home || "";
         const work = units[Number(card.dataset.idx)] && units[Number(card.dataset.idx)].work;
         if (work) {
             const src = work.card || work.src;
             card.querySelectorAll("img").forEach(function (img) {
+                img.dataset.swap = String((Number(img.dataset.swap) || 0) + 1);
+                img.alt = work.name;
                 if (img.getAttribute("src") !== src) img.src = src;
             });
         }
@@ -1439,6 +1580,62 @@
         card.style.left = "";
         card.style.top = "";
         card.style.zIndex = "";
+        card.getBoundingClientRect();
+        card.style.transition = "";
+        if (!sphere.querySelector(".sphere-card.is-facing")) sphere.classList.remove("is-open");
+    }
+
+    function closeSpherePreview() {
+        if (sphereReturning || held < 0) return;
+        const card = cards[held];
+        window.clearTimeout(navTimer);
+        nav.classList.add("is-out");
+        nav.hidden = true;
+        if (!card) {
+            held = -1;
+            focused = -1;
+            return;
+        }
+        const frame = hallFrame();
+        const dest = projectCard(card);
+        if (!dest || reduced) {
+            sphereReturning = false;
+            held = -1;
+            focused = -1;
+            pickT = 0;
+            pickIndex = -1;
+            restoreCard(card);
+            cards.forEach(function (other) { other._cover = 0; });
+            return;
+        }
+        sphereReturning = true;
+        const dx = dest.cx - (frame.left + frame.w / 2);
+        const dy = dest.cy - (frame.top + frame.h / 2);
+        const scale = Math.max(0.12, Math.min(dest.w / frame.w, dest.h / frame.h));
+        card.classList.add("is-returning");
+        card.style.transform = "translate(" + dx.toFixed(2) + "px, " + dy.toFixed(2) + "px) rotate(" + dest.angle.toFixed(4) + "rad) scale(" + scale.toFixed(4) + ")";
+        window.setTimeout(function () {
+            sphereReturning = false;
+            held = -1;
+            focused = -1;
+            pickT = 0;
+            pickIndex = -1;
+            restoreCard(card);
+            cards.forEach(function (other) { other._cover = 0; });
+        }, 680);
+    }
+
+    function stepSphere(dir) {
+        if (sphereReturning || held < 0) return;
+        focused = (focused + dir + units.length) % units.length;
+        const card = cards[held];
+        const work = units[focused] && units[focused].work;
+        if (!card || !work) return;
+        stage.setAttribute("aria-label", work.name);
+        card.querySelectorAll("img").forEach(function (img) {
+            img.alt = work.name;
+            swapWhenReady(img, work.src);
+        });
     }
 
     function paintSphere(now) {
@@ -1453,10 +1650,10 @@
             sphereScale = 0.7 + 0.3 * enter;
             eyeRatio = 3 + (0.6 - 3) * enter;
             if (elapsed >= INTRO_END + INTRO_ENTER) introOn = false;
-        } else if (!dragging && autoSpin && !reduced) {
+        } else if (!dragging && autoSpin && !reduced && held < 0 && !sphereReturning) {
             turn(0.001 * 180 / Math.PI, 0);
         }
-        if (!dragging && focused < 0 && (velX || velY)) {
+        if (!dragging && held < 0 && !sphereReturning && (velX || velY)) {
             turn(velX, velY);
             velX *= reduced ? 0 : 0.9;
             velY *= reduced ? 0 : 0.9;
@@ -1472,20 +1669,26 @@
         }
         const dt = sphereStamp ? Math.min(0.05, (now - sphereStamp) / 1000) : 0.016;
         sphereStamp = now;
-        if (focused >= 0) pickIndex = focused;
-        pickT += ((focused >= 0 ? 1 : 0) - pickT) * (reduced ? 1 : (1 - Math.exp(-8 * dt)));
-        if (Math.abs((focused >= 0 ? 1 : 0) - pickT) < 0.012) pickT = focused >= 0 ? 1 : 0;
-        if (pickT === 0) pickIndex = -1;
+        if (!sphereReturning && held >= 0) pickIndex = held;
+        if (!sphereReturning) {
+            pickT += ((held >= 0 ? 1 : 0) - pickT) * (reduced ? 1 : (1 - Math.exp(-14 * dt)));
+            if (Math.abs((held >= 0 ? 1 : 0) - pickT) < 0.012) pickT = held >= 0 ? 1 : 0;
+            if (pickT === 0) pickIndex = -1;
+        }
         let worldMatrix = null;
         try { worldMatrix = new DOMMatrix(world.style.transform); } catch (err) { worldMatrix = new DOMMatrix(); }
         stage.classList.remove("is-deep");
         const near = Math.max(110, radius * 0.34);
+        let faceRect = null;
+        if (held >= 0 && cards[held] && cards[held].classList.contains("is-facing")) {
+            faceRect = cards[held].getBoundingClientRect();
+        }
         units.forEach(function (unit, i) {
             const light = 1;
             const shown = introAt ? introEase((elapsed - (INTRO_DELAY + (INTRO_STAGGER / works.length) * i)) / INTRO_FADE) : 1;
-            const opening = i === pickIndex && pickT > 0;
+            const opening = i === pickIndex && pickT > 0 && !sphereReturning;
             let fade = shown;
-            if (pickIndex >= 0 && pickT > 0.02) fade = i === pickIndex ? shown : shown * (1 - 0.65 * pickT);
+            if (pickIndex >= 0 && pickT > 0.02 && !sphereReturning) fade = i === pickIndex ? shown : shown * (1 - 0.66 * pickT);
             const card = cards[i];
             let behind = false;
             let spanX = 0;
@@ -1521,12 +1724,21 @@
                 }
                 behind = centerDist < near || minDist < 36 || pts.length < 4 || spanX > stage.clientWidth * 1.05 || spanY > stage.clientHeight * 1.15;
             }
+            if (card._cover && held >= 0 && i !== held) fade = 0;
+            if (faceRect && i !== held && card.style.visibility !== "hidden") {
+                const rect = card.getBoundingClientRect();
+                const pad = 10;
+                const overlaps = rect.width > 8 && rect.width < stage.clientWidth && rect.right > faceRect.left - pad && rect.left < faceRect.right + pad && rect.bottom > faceRect.top - pad && rect.top < faceRect.bottom + pad;
+                if (overlaps) fade = 0;
+            }
             const corner = opening || spanX < 16 ? 14 : Math.min(14, 14 * tilePx / spanX);
             if (card._br !== corner) {
                 card._br = corner;
                 card.style.setProperty("--br", corner.toFixed(2) + "px");
             }
-            if (opening) {
+            if (sphereReturning && i === held) {
+                card.style.visibility = "visible";
+            } else if (opening) {
                 card._posed = 1;
                 card._parked = 0;
                 card.style.visibility = "visible";
@@ -1539,7 +1751,7 @@
                 card.style.transform = behind ? "scale(0)" : (card._home || "");
             }
             const sharp = opening && pickT > 0.35;
-            if (card._sharp !== sharp) {
+            if (!sphereReturning && card._sharp !== sharp) {
                 card._sharp = sharp;
                 const src = sharp ? units[i].work.src : (units[i].work.card || units[i].work.src);
                 card.querySelectorAll("img").forEach(function (img) {
@@ -1562,10 +1774,12 @@
                 card._dim = nextDim;
                 card.style.setProperty("--d", nextDim.toFixed(3));
             }
-            const hit = behind || nextFade < 0.08 ? "none" : "";
+            const hit = behind || nextFade < 0.08 ? "none" : "auto";
             if (card._hit !== hit) {
                 card._hit = hit;
-                card.style.pointerEvents = hit;
+                card.querySelectorAll("figure").forEach(function (figure) {
+                    figure.style.pointerEvents = hit;
+                });
             }
         });
     }
@@ -1915,9 +2129,14 @@
             if (focused >= 0) {
                 if (view === "grid" || stage.classList.contains("is-lit")) closeLit();
                 else {
+                    sphereReturning = false;
+                    held = -1;
                     focused = -1;
                     pickT = 0;
                     pickIndex = -1;
+                    window.clearTimeout(navTimer);
+                    nav.classList.add("is-out");
+                    nav.hidden = true;
                     sphere.querySelectorAll(".sphere-card.is-facing").forEach(restoreCard);
                 }
             }
@@ -2009,7 +2228,7 @@
     });
 
     sphereStage.addEventListener("pointerdown", function (event) {
-        if (introOn || event.button !== 0 || stage.classList.contains("is-grid")) return;
+        if (introOn || event.button !== 0 || stage.classList.contains("is-grid") || sphereReturning) return;
         event.stopPropagation();
         ptr = {
             id: event.pointerId,
@@ -2017,7 +2236,7 @@
             y: event.clientY,
             lastX: event.clientX,
             lastY: event.clientY,
-            card: event.target.closest(".sphere-card"),
+            card: null,
             coarse: event.pointerType === "touch",
             vx: 0,
             vy: 0
@@ -2038,14 +2257,15 @@
         ptr.lastX = event.clientX;
         ptr.lastY = event.clientY;
         const sens = 180 / (Math.PI * Math.max(80, radius));
-        turn(stepX * sens, -stepY * sens);
+        if (held < 0) turn(stepX * sens, -stepY * sens);
     });
 
     function endSpherePointer(event) {
         if (!ptr || ptr.id !== event.pointerId) return;
         const moved = Math.hypot(event.clientX - ptr.x, event.clientY - ptr.y);
         const slop = ptr.coarse ? 14 : 6;
-        const card = ptr.card;
+        const under = document.elementFromPoint(event.clientX, event.clientY);
+        const card = (under && under.closest(".sphere-card")) || cardUnderPoint(event.clientX, event.clientY);
         const sens = 180 / (Math.PI * Math.max(80, radius));
         velX = reduced ? 0 : ptr.vx * sens;
         velY = reduced ? 0 : -ptr.vy * sens;
@@ -2053,8 +2273,11 @@
         stage.classList.remove("is-drag");
         ptr = null;
         if (moved < slop) {
-            if (focused >= 0) focused = -1;
-            else if (card) focused = Number(card.dataset.idx);
+            if (held >= 0) closeSpherePreview();
+            else if (card) {
+                held = Number(card.dataset.idx);
+                focused = held;
+            }
         }
     }
 
