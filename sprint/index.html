@@ -4,14 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sprint — Oberyon</title>
-    <meta name="description" content="Two weeks on one surface. Designed, and in the repo. Then it stops.">
+    <meta name="description" content="Ten working days on one surface, Monday to the Friday after next. Designed, and in the repo. Then it stops. The fee is fixed before day one.">
     <link rel="canonical" href="https://oberyon.com/sprint/">
-    <meta name="robots" content="index,follow,max-image-preview:large">
+    <link rel="alternate" hreflang="en" href="https://oberyon.com/sprint/">
+    <link rel="alternate" hreflang="x-default" href="https://oberyon.com/sprint/">
+    <link rel="alternate" type="text/plain" href="https://oberyon.com/llms.txt" title="LLM-readable site summary">
+    <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
     <meta name="author" content="Samet Ozkale">
     <meta name="theme-color" content="#123C30">
     <meta property="og:type" content="website">
     <meta property="og:title" content="Sprint — Oberyon">
-    <meta property="og:description" content="Two weeks on one surface. Designed, and in the repo. Then it stops.">
+    <meta property="og:description" content="Ten working days on one surface, Monday to the Friday after next. Designed, and in the repo. Then it stops. The fee is fixed before day one.">
     <meta property="og:url" content="https://oberyon.com/sprint/">
     <meta property="og:image" content="https://oberyon.com/og.jpg">
     <meta property="og:image:type" content="image/jpeg">
@@ -22,7 +25,7 @@
     <meta property="og:locale" content="en_US">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Sprint — Oberyon">
-    <meta name="twitter:description" content="Two weeks on one surface. Designed, and in the repo. Then it stops.">
+    <meta name="twitter:description" content="Ten working days on one surface, Monday to the Friday after next. Designed, and in the repo. Then it stops. The fee is fixed before day one.">
     <meta name="twitter:image" content="https://oberyon.com/og.jpg">
     <meta name="twitter:image:alt" content="Oberyon sprint">
     <meta name="twitter:site" content="@oberyonstudio">
@@ -34,26 +37,76 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://app.cal.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Serif&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../offer.css?v=8">
+    <link rel="stylesheet" href="../offer.css?v=10">
     <link rel="stylesheet" href="../cursor.css?v=3">
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
-        "@type": "Service",
-        "name": "Sprint",
-        "serviceType": "Design engineering sprint",
-        "url": "https://oberyon.com/sprint/",
-        "description": "Two weeks on one surface. Designed, and in the repo. Then it stops.",
-        "provider": {
-            "@type": "Organization",
-            "name": "Oberyon",
-            "url": "https://oberyon.com/"
-        },
-        "offers": {
-            "@type": "Offer",
-            "url": "https://oberyon.com/sprint/",
-            "description": "Ten working days, Monday to the Friday after next, on one surface. The fee is fixed before day one."
-        }
+        "@graph": [
+            {
+                "@type": "Service",
+                "@id": "https://oberyon.com/sprint/#service",
+                "name": "Sprint",
+                "serviceType": "Design engineering sprint",
+                "url": "https://oberyon.com/sprint/",
+                "description": "Ten working days on one surface, Monday to the Friday after next. Designed, and in the repo. Then it stops. The fee is fixed before day one.",
+                "provider": { "@id": "https://oberyon.com/#organization" },
+                "audience": { "@type": "BusinessAudience", "audienceType": "Startups" },
+                "offers": {
+                    "@type": "Offer",
+                    "url": "https://oberyon.com/sprint/",
+                    "description": "Ten working days, Monday to the Friday after next, on one surface. The fee is fixed before day one and is not published on the site."
+                }
+            },
+            {
+                "@type": "WebPage",
+                "@id": "https://oberyon.com/sprint/#webpage",
+                "url": "https://oberyon.com/sprint/",
+                "name": "Sprint — Oberyon",
+                "description": "Ten working days on one surface, Monday to the Friday after next. Designed, and in the repo. Then it stops. The fee is fixed before day one.",
+                "inLanguage": "en",
+                "dateModified": "2026-10-16",
+                "isPartOf": { "@id": "https://oberyon.com/#website" },
+                "about": { "@id": "https://oberyon.com/sprint/#service" },
+                "breadcrumb": { "@id": "https://oberyon.com/sprint/#breadcrumb" },
+                "mainEntity": { "@id": "https://oberyon.com/sprint/#faq" }
+            },
+            {
+                "@type": "BreadcrumbList",
+                "@id": "https://oberyon.com/sprint/#breadcrumb",
+                "itemListElement": [
+                    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://oberyon.com/" },
+                    { "@type": "ListItem", "position": 2, "name": "Sprint", "item": "https://oberyon.com/sprint/" }
+                ]
+            },
+            {
+                "@type": "FAQPage",
+                "@id": "https://oberyon.com/sprint/#faq",
+                "isPartOf": { "@id": "https://oberyon.com/sprint/#webpage" },
+                "mainEntity": [
+                    {
+                        "@type": "Question",
+                        "name": "How long is a sprint?",
+                        "acceptedAnswer": { "@type": "Answer", "text": "Ten working days, Monday to the Friday after next." }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "What does a sprint cover?",
+                        "acceptedAnswer": { "@type": "Answer", "text": "One surface. A flow, not the whole product. Designed, and in the repo. Then it stops." }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "When is the fee set?",
+                        "acceptedAnswer": { "@type": "Answer", "text": "The fee is fixed before day one. It is not published on the site." }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "What do you leave with?",
+                        "acceptedAnswer": { "@type": "Answer", "text": "The interface, and the front-end in the repo you already ship from. Components named the way that repo already names them. A one-page note of what we decided, and what we left out." }
+                    }
+                ]
+            }
+        ]
     }
     </script>
 </head>
@@ -63,7 +116,6 @@
             <img src="../oberyon.svg" alt="Oberyon" width="84" height="18">
         </a>
         <nav class="ways" aria-label="Ways of working">
-            <a href="/discovery/"><canvas class="orb" data-orb="searching" data-size="20" width="20" height="20" aria-hidden="true"></canvas>Discovery</a>
             <a href="/sprint/" aria-current="page"><canvas class="orb" data-orb="working" data-size="20" width="20" height="20" aria-hidden="true"></canvas>Sprint</a>
             <a href="/project/"><canvas class="orb" data-orb="composing" data-size="20" width="20" height="20" aria-hidden="true"></canvas>Project</a>
             <a href="/retainer/"><canvas class="orb" data-orb="weaving" data-size="20" width="20" height="20" aria-hidden="true"></canvas>Retainer</a>
@@ -100,18 +152,34 @@
         <section class="block close">
             <div>
                 <h2>If the surface is already clear.</h2>
-                <p>Tell us which one. If it isn’t, discovery is free.</p>
+                <p>Tell us which one.</p>
             </div>
             <a class="btn" href="https://cal.com/sametozkale/oberyon-intro-call" data-cal-link="sametozkale/oberyon-intro-call" data-cal-namespace="oberyon-intro-call" data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true"}'>Start a sprint</a>
+        </section>
+        <section class="block" id="answers">
+            <h2>Answers</h2>
+            <dl class="qa">
+                <div>
+                    <dt>How long is a sprint?</dt>
+                    <dd>Ten working days, Monday to the Friday after next.</dd>
+                </div>
+                <div>
+                    <dt>What does a sprint cover?</dt>
+                    <dd>One surface. A flow, not the whole product. Designed, and in the repo. Then it stops.</dd>
+                </div>
+                <div>
+                    <dt>When is the fee set?</dt>
+                    <dd>The fee is fixed before day one. It is not published on the site.</dd>
+                </div>
+                <div>
+                    <dt>What do you leave with?</dt>
+                    <dd>The interface, and the front-end in the repo you already ship from. Components named the way that repo already names them. A one-page note of what we decided, and what we left out.</dd>
+                </div>
+            </dl>
         </section>
         <section class="block">
             <h2>The other ways.</h2>
             <nav class="pick" aria-label="Choose a way of working">
-            <a href="/discovery/">
-                <b><canvas class="orb" data-orb="searching" data-size="20" width="20" height="20" aria-hidden="true"></canvas>Discovery</b>
-                <span>Free</span>
-                <span>A written read, before anyone is hired.</span>
-            </a>
             <a href="/sprint/" aria-current="page">
                 <b><canvas class="orb" data-orb="working" data-size="20" width="20" height="20" aria-hidden="true"></canvas>Sprint</b>
                 <span>2 weeks</span>
@@ -153,7 +221,6 @@
                     <div>
                         <h2>Services</h2>
                         <ul>
-                            <li><a href="/discovery/"><canvas class="orb" data-orb="searching" data-size="20" width="20" height="20" aria-hidden="true"></canvas>Discovery</a></li>
                             <li><a href="/sprint/" aria-current="page"><canvas class="orb" data-orb="working" data-size="20" width="20" height="20" aria-hidden="true"></canvas>Sprint</a></li>
                             <li><a href="/project/"><canvas class="orb" data-orb="composing" data-size="20" width="20" height="20" aria-hidden="true"></canvas>Project</a></li>
                             <li><a href="/retainer/"><canvas class="orb" data-orb="weaving" data-size="20" width="20" height="20" aria-hidden="true"></canvas>Retainer</a></li>

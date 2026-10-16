@@ -380,7 +380,26 @@
         return { prev: prev, next: next, ahead: ahead };
     }
 
+    function releaseFlat(card) {
+        if (!card || !card.classList.contains("is-flat")) return;
+        card.classList.remove("is-flat", "is-returning", "is-front");
+        card.style.transition = "none";
+        card.style.left = "";
+        card.style.top = "";
+        card.style.width = "";
+        card.style.height = "";
+        card.style.margin = "";
+        card.style.zIndex = "";
+        card.style.transform = "";
+        card.style.transformOrigin = "";
+        if (card.parentElement !== rig) rig.appendChild(card);
+        writePose(card, shelfOf(card));
+        card.getBoundingClientRect();
+        card.style.transition = "";
+    }
+
     function finishReturn(card, parted) {
+        releaseFlat(card);
         restoreSlot(card);
         parted.forEach(function (other) {
             writePose(other, shelfOf(other));
@@ -404,7 +423,6 @@
         window.clearTimeout(navTimer);
         nav.classList.add("is-out");
         const card = front;
-        const shelf = shelfOf(card);
         const side = Number(card.style.getPropertyValue("--side"));
         const openZ = metric("--gap", 470) * 0.22;
         const openX = side * metric("--lane", 470) * 0.36;
@@ -427,20 +445,18 @@
             writePose(other, { x: pose.x + openX, z: pose.z, turn: pose.turn });
         });
         if (reduced) {
-            writePose(card, shelf);
+            releaseFlat(card);
             finishReturn(card, parted);
             return;
         }
-        later(function () {
-            writePose(card, {
-                x: 0,
-                z: shelf.z,
-                turn: shelf.turn * 0.45
-            });
-        }, 220);
-        later(function () {
-            writePose(card, shelf);
-        }, 820);
+        const from = card._flatFrom;
+        const frame = hallFrame();
+        if (from) {
+            const dx = from.cx - (frame.left + frame.w / 2);
+            const dy = from.cy - (frame.top + frame.h / 2);
+            const scale = Math.max(0.12, Math.min(from.w / frame.w, from.h / frame.h));
+            card.style.transform = "translate(" + dx.toFixed(2) + "px, " + dy.toFixed(2) + "px) scale(" + scale.toFixed(4) + ")";
+        }
         later(function () {
             finishReturn(card, parted);
         }, 1400);
@@ -466,12 +482,32 @@
         const img = card.querySelector("img");
         slotSrc = img.dataset.src || "";
         useOriginal(img);
-        writePose(card, {
-            x: 0,
-            z: 240 - cam,
-            turn: 0
-        });
-        card.classList.add("is-front");
+        const host = stage.getBoundingClientRect();
+        const seen = card.getBoundingClientRect();
+        card._flatFrom = {
+            cx: seen.left + seen.width / 2 - host.left,
+            cy: seen.top + seen.height / 2 - host.top,
+            w: seen.width,
+            h: seen.height
+        };
+        const frame = hallFrame();
+        const dx = card._flatFrom.cx - (frame.left + frame.w / 2);
+        const dy = card._flatFrom.cy - (frame.top + frame.h / 2);
+        const scale = Math.max(0.12, Math.min(card._flatFrom.w / frame.w, card._flatFrom.h / frame.h));
+        stage.appendChild(card);
+        card.classList.add("is-front", "is-flat");
+        card.style.transition = "none";
+        card.style.margin = "0";
+        card.style.zIndex = "5";
+        card.style.left = frame.left + "px";
+        card.style.top = frame.top + "px";
+        card.style.width = frame.w + "px";
+        card.style.height = frame.h + "px";
+        card.style.transformOrigin = "center center";
+        card.style.transform = "translate(" + dx.toFixed(2) + "px, " + dy.toFixed(2) + "px) scale(" + scale.toFixed(4) + ")";
+        card.getBoundingClientRect();
+        card.style.transition = "";
+        card.style.transform = "translate(0px, 0px) scale(1)";
         card.style.setProperty("--fade", "1");
         stage.classList.add("is-viewing");
         armNav();
@@ -683,6 +719,17 @@
         else stepFront(1);
     });
     window.addEventListener("resize", function () {
+        if (front && front.classList.contains("is-flat") && !front.classList.contains("is-returning")) {
+            const frame = hallFrame();
+            front.style.transition = "none";
+            front.style.left = frame.left + "px";
+            front.style.top = frame.top + "px";
+            front.style.width = frame.w + "px";
+            front.style.height = frame.h + "px";
+            front.style.transform = "translate(0px, 0px) scale(1)";
+            front.getBoundingClientRect();
+            front.style.transition = "";
+        }
         if (nav.classList.contains("is-out")) return;
         pinNav();
     });
@@ -767,6 +814,7 @@
 
     function open(i) {
         const wasClosed = stage.hidden;
+        pool.forEach(releaseFlat);
         clearSettle();
         settling = false;
         queued = null;
@@ -793,6 +841,7 @@
 
     function close() {
         if (stage.hidden) return;
+        pool.forEach(releaseFlat);
         clearSettle();
         settling = false;
         queued = null;
@@ -1040,7 +1089,7 @@
     }
 
     stage.addEventListener("pointermove", function (event) {
-        if (view === "sphere" || pointer || front || settling || stage.classList.contains("is-drag")) return;
+        if (view === "sphere" || view === "grid" || pointer || front || settling || stage.classList.contains("is-drag")) return;
         const hit = event.target.closest && event.target.closest(".hall-card");
         if (hit && !hit.hidden) {
             stage.classList.add("is-aimed");
@@ -1053,13 +1102,13 @@
     });
 
     stage.addEventListener("pointerleave", function () {
-        if (view === "sphere") return;
+        if (view === "sphere" || view === "grid") return;
         clearRaise();
         stage.classList.remove("is-aimed");
     });
 
     stage.addEventListener("pointerdown", function (event) {
-        if (view === "sphere") return;
+        if (view === "sphere" || view === "grid") return;
         if (event.button !== 0) return;
         if (event.target.closest(".hall-nav") || event.target.closest(".hall-back") || event.target.closest(".view-switch")) return;
         pointer = { id: event.pointerId, x: event.clientX, cam: cam };
@@ -1068,12 +1117,12 @@
     });
 
     stage.addEventListener("pointermove", function (event) {
-        if (view === "sphere" || !pointer || pointer.id !== event.pointerId) return;
+        if (view === "sphere" || view === "grid" || !pointer || pointer.id !== event.pointerId) return;
         setCam(pointer.cam + (event.clientX - pointer.x) * 1.35);
     });
 
     function endPointer(event) {
-        if (view === "sphere" || !pointer || pointer.id !== event.pointerId) return;
+        if (view === "sphere" || view === "grid" || !pointer || pointer.id !== event.pointerId) return;
         const moved = Math.abs(event.clientX - pointer.x);
         pointer = null;
         stage.classList.remove("is-drag");
@@ -1084,10 +1133,8 @@
         if (moved < 6) {
             const hit = document.elementFromPoint(event.clientX, event.clientY);
             const card = hit && hit.closest(".hall-card");
-            if (hit && (hit.closest(".hall-back") || hit.closest(".hall-nav"))) return;
-            if (card) present(card);
-            else if (front) shelve();
-            else close();
+            if (hit && (hit.closest(".hall-back") || hit.closest(".hall-nav") || hit.closest(".view-switch"))) return;
+            if (card && card !== front) present(card);
         }
     }
 
@@ -1190,7 +1237,6 @@
     const lit = sphere.querySelector(".sphere-lit");
     const plate = sphere.querySelector(".sphere-plate");
     const litImg = plate.querySelector("img");
-    let litAt = 0;
     const switcher = stage.querySelector(".view-switch");
     let view = "grid";
     let focused = -1;
@@ -1417,11 +1463,13 @@
         const scale = persp / (persp - 100);
         const w = card * scale;
         const h = w * 816 / 1100;
+        const hostW = sphereStage.clientWidth || stage.clientWidth;
+        const hostH = sphereStage.clientHeight || stage.clientHeight;
         return {
             w: w,
             h: h,
-            left: (sphereStage.clientWidth - w) / 2,
-            top: sphereStage.clientHeight * 0.46 - h / 2
+            left: (hostW - w) / 2,
+            top: hostH * 0.46 - h / 2
         };
     }
 
@@ -1731,7 +1779,8 @@
                 const overlaps = rect.width > 8 && rect.width < stage.clientWidth && rect.right > faceRect.left - pad && rect.left < faceRect.right + pad && rect.bottom > faceRect.top - pad && rect.top < faceRect.bottom + pad;
                 if (overlaps) fade = 0;
             }
-            const corner = opening || spanX < 16 ? 14 : Math.min(14, 14 * tilePx / spanX);
+            const round = stage.clientWidth <= 980 ? 10 : 14;
+            const corner = opening || spanX < 16 ? round : Math.min(round, round * tilePx / spanX);
             if (card._br !== corner) {
                 card._br = corner;
                 card.style.setProperty("--br", corner.toFixed(2) + "px");
@@ -2080,7 +2129,6 @@
         if (!work) return;
         focused = index;
         sourceEl = from;
-        litAt = performance.now();
         litImg.alt = work.name;
         litImg.dataset.src = work.src;
         stage.setAttribute("aria-label", work.name);
@@ -2125,6 +2173,14 @@
 
     function setView(next) {
         if (next === view) return;
+        if (front) {
+            clearSettle();
+            settling = false;
+            queued = null;
+            releaseFlat(front);
+            front = null;
+            stage.classList.remove("is-viewing", "is-settling");
+        }
         if (view === "sphere" || view === "grid") {
             if (focused >= 0) {
                 if (view === "grid" || stage.classList.contains("is-lit")) closeLit();
@@ -2205,17 +2261,13 @@
     if (location.hash === "#grid") openGrid();
     if (location.hash === "#hall") openHall();
 
-    lit.addEventListener("click", function () {
-        if (performance.now() - litAt < 450) return;
-        closeLit();
-    });
-
     rows.addEventListener("click", function (event) {
         if (reelSkipClick) {
             reelSkipClick = false;
             return;
         }
-        const figure = event.target.closest("figure");
+        const under = document.elementFromPoint(event.clientX, event.clientY);
+        const figure = (under && under.closest("figure")) || (event.target.closest && event.target.closest("figure"));
         if (!figure || !figure.classList.contains("is-focus")) return;
         openLit(Number(figure.dataset.idx), figure);
     });
@@ -2272,12 +2324,9 @@
         dragging = false;
         stage.classList.remove("is-drag");
         ptr = null;
-        if (moved < slop) {
-            if (held >= 0) closeSpherePreview();
-            else if (card) {
-                held = Number(card.dataset.idx);
-                focused = held;
-            }
+        if (moved < slop && held < 0 && card) {
+            held = Number(card.dataset.idx);
+            focused = held;
         }
     }
 

@@ -4,14 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Project — Oberyon</title>
-    <meta name="description" content="A defined piece, with an end date. Four, eight, or twelve weeks, chosen before kickoff.">
+    <meta name="description" content="Four, eight, or twelve weeks, chosen before kickoff. Four weeks is one flow. Eight is a surface. Twelve is a product area, designed and in the codebase.">
     <link rel="canonical" href="https://oberyon.com/project/">
-    <meta name="robots" content="index,follow,max-image-preview:large">
+    <link rel="alternate" hreflang="en" href="https://oberyon.com/project/">
+    <link rel="alternate" hreflang="x-default" href="https://oberyon.com/project/">
+    <link rel="alternate" type="text/plain" href="https://oberyon.com/llms.txt" title="LLM-readable site summary">
+    <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
     <meta name="author" content="Samet Ozkale">
     <meta name="theme-color" content="#123C30">
     <meta property="og:type" content="website">
     <meta property="og:title" content="Project — Oberyon">
-    <meta property="og:description" content="A defined piece, with an end date. Four, eight, or twelve weeks, chosen before kickoff.">
+    <meta property="og:description" content="Four, eight, or twelve weeks, chosen before kickoff. Four weeks is one flow. Eight is a surface. Twelve is a product area, designed and in the codebase.">
     <meta property="og:url" content="https://oberyon.com/project/">
     <meta property="og:image" content="https://oberyon.com/og.jpg">
     <meta property="og:image:type" content="image/jpeg">
@@ -22,7 +25,7 @@
     <meta property="og:locale" content="en_US">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Project — Oberyon">
-    <meta name="twitter:description" content="A defined piece, with an end date. Four, eight, or twelve weeks, chosen before kickoff.">
+    <meta name="twitter:description" content="Four, eight, or twelve weeks, chosen before kickoff. Four weeks is one flow. Eight is a surface. Twelve is a product area, designed and in the codebase.">
     <meta name="twitter:image" content="https://oberyon.com/og.jpg">
     <meta name="twitter:image:alt" content="Oberyon project">
     <meta name="twitter:site" content="@oberyonstudio">
@@ -34,26 +37,81 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://app.cal.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Instrument+Serif&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../offer.css?v=8">
+    <link rel="stylesheet" href="../offer.css?v=10">
     <link rel="stylesheet" href="../cursor.css?v=3">
     <script type="application/ld+json">
     {
         "@context": "https://schema.org",
-        "@type": "Service",
-        "name": "Project",
-        "serviceType": "Design engineering project",
-        "url": "https://oberyon.com/project/",
-        "description": "A defined piece, with an end date. Four, eight, or twelve weeks, chosen before kickoff.",
-        "provider": {
-            "@type": "Organization",
-            "name": "Oberyon",
-            "url": "https://oberyon.com/"
-        },
-        "offers": {
-            "@type": "Offer",
-            "url": "https://oberyon.com/project/",
-            "description": "Four, eight, or twelve weeks. The length and the end date are set before kickoff."
-        }
+        "@graph": [
+            {
+                "@type": "Service",
+                "@id": "https://oberyon.com/project/#service",
+                "name": "Project",
+                "serviceType": "Design engineering project",
+                "url": "https://oberyon.com/project/",
+                "description": "A defined piece, with an end date. Four, eight, or twelve weeks, chosen before kickoff. The date does not move.",
+                "provider": { "@id": "https://oberyon.com/#organization" },
+                "audience": { "@type": "BusinessAudience", "audienceType": "Startups" },
+                "offers": {
+                    "@type": "Offer",
+                    "url": "https://oberyon.com/project/",
+                    "description": "Four, eight, or twelve weeks. The length and the end date are set before kickoff. The fee is not published on the site."
+                }
+            },
+            {
+                "@type": "WebPage",
+                "@id": "https://oberyon.com/project/#webpage",
+                "url": "https://oberyon.com/project/",
+                "name": "Project — Oberyon",
+                "description": "A defined piece, with an end date. Four, eight, or twelve weeks, chosen before kickoff. The date does not move.",
+                "inLanguage": "en",
+                "dateModified": "2026-10-16",
+                "isPartOf": { "@id": "https://oberyon.com/#website" },
+                "about": { "@id": "https://oberyon.com/project/#service" },
+                "breadcrumb": { "@id": "https://oberyon.com/project/#breadcrumb" },
+                "mainEntity": { "@id": "https://oberyon.com/project/#faq" }
+            },
+            {
+                "@type": "BreadcrumbList",
+                "@id": "https://oberyon.com/project/#breadcrumb",
+                "itemListElement": [
+                    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://oberyon.com/" },
+                    { "@type": "ListItem", "position": 2, "name": "Project", "item": "https://oberyon.com/project/" }
+                ]
+            },
+            {
+                "@type": "FAQPage",
+                "@id": "https://oberyon.com/project/#faq",
+                "isPartOf": { "@id": "https://oberyon.com/project/#webpage" },
+                "mainEntity": [
+                    {
+                        "@type": "Question",
+                        "name": "How long is a project?",
+                        "acceptedAnswer": { "@type": "Answer", "text": "Four, eight, or twelve weeks. The length and the end date are set before kickoff. The date does not move." }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "What is four weeks?",
+                        "acceptedAnswer": { "@type": "Answer", "text": "One flow, from the empty state to the shipped screen." }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "What is eight weeks?",
+                        "acceptedAnswer": { "@type": "Answer", "text": "A surface, and the components that hold it." }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "What is twelve weeks?",
+                        "acceptedAnswer": { "@type": "Answer", "text": "A product area, designed and in the codebase." }
+                    },
+                    {
+                        "@type": "Question",
+                        "name": "Is the fee listed?",
+                        "acceptedAnswer": { "@type": "Answer", "text": "No. It is not published on the site." }
+                    }
+                ]
+            }
+        ]
     }
     </script>
 </head>
@@ -63,7 +121,6 @@
             <img src="../oberyon.svg" alt="Oberyon" width="84" height="18">
         </a>
         <nav class="ways" aria-label="Ways of working">
-            <a href="/discovery/"><canvas class="orb" data-orb="searching" data-size="20" width="20" height="20" aria-hidden="true"></canvas>Discovery</a>
             <a href="/sprint/"><canvas class="orb" data-orb="working" data-size="20" width="20" height="20" aria-hidden="true"></canvas>Sprint</a>
             <a href="/project/" aria-current="page"><canvas class="orb" data-orb="composing" data-size="20" width="20" height="20" aria-hidden="true"></canvas>Project</a>
             <a href="/retainer/"><canvas class="orb" data-orb="weaving" data-size="20" width="20" height="20" aria-hidden="true"></canvas>Retainer</a>
@@ -103,14 +160,34 @@
             </div>
             <a class="btn" href="https://cal.com/sametozkale/oberyon-intro-call" data-cal-link="sametozkale/oberyon-intro-call" data-cal-namespace="oberyon-intro-call" data-cal-config='{"layout":"month_view","useSlotsViewOnSmallScreen":"true"}'>Scope a project</a>
         </section>
+        <section class="block" id="answers">
+            <h2>Answers</h2>
+            <dl class="qa">
+                <div>
+                    <dt>How long is a project?</dt>
+                    <dd>Four, eight, or twelve weeks. The length and the end date are set before kickoff. The date does not move.</dd>
+                </div>
+                <div>
+                    <dt>What is four weeks?</dt>
+                    <dd>One flow, from the empty state to the shipped screen.</dd>
+                </div>
+                <div>
+                    <dt>What is eight weeks?</dt>
+                    <dd>A surface, and the components that hold it.</dd>
+                </div>
+                <div>
+                    <dt>What is twelve weeks?</dt>
+                    <dd>A product area, designed and in the codebase.</dd>
+                </div>
+                <div>
+                    <dt>Is the fee listed?</dt>
+                    <dd>No. It is not published on the site.</dd>
+                </div>
+            </dl>
+        </section>
         <section class="block">
             <h2>The other ways.</h2>
             <nav class="pick" aria-label="Choose a way of working">
-            <a href="/discovery/">
-                <b><canvas class="orb" data-orb="searching" data-size="20" width="20" height="20" aria-hidden="true"></canvas>Discovery</b>
-                <span>Free</span>
-                <span>A written read, before anyone is hired.</span>
-            </a>
             <a href="/sprint/">
                 <b><canvas class="orb" data-orb="working" data-size="20" width="20" height="20" aria-hidden="true"></canvas>Sprint</b>
                 <span>2 weeks</span>
@@ -152,7 +229,6 @@
                     <div>
                         <h2>Services</h2>
                         <ul>
-                            <li><a href="/discovery/"><canvas class="orb" data-orb="searching" data-size="20" width="20" height="20" aria-hidden="true"></canvas>Discovery</a></li>
                             <li><a href="/sprint/"><canvas class="orb" data-orb="working" data-size="20" width="20" height="20" aria-hidden="true"></canvas>Sprint</a></li>
                             <li><a href="/project/" aria-current="page"><canvas class="orb" data-orb="composing" data-size="20" width="20" height="20" aria-hidden="true"></canvas>Project</a></li>
                             <li><a href="/retainer/"><canvas class="orb" data-orb="weaving" data-size="20" width="20" height="20" aria-hidden="true"></canvas>Retainer</a></li>

@@ -3265,9 +3265,7 @@ span.shot-line {
 .sphere-scrim {
     position: absolute;
     inset: 0;
-    border: 0;
     background: transparent;
-    cursor: pointer;
 }
 
 .sphere-plate {
@@ -3471,6 +3469,27 @@ span.shot-line {
     z-index: auto;
 }
 
+.hall-card.is-flat,
+.hall-card.is-flat.is-returning {
+    z-index: 5;
+    opacity: 1;
+    transform-style: flat;
+    transform-origin: center center;
+    backface-visibility: visible;
+    -webkit-backface-visibility: visible;
+    transition: transform 0.85s cubic-bezier(0.45, 0.05, 0.2, 1);
+}
+
+.hall-card.is-flat.is-returning {
+    transition-duration: 0.62s;
+}
+
+.hall-card.is-flat img {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: auto;
+}
+
 .hall-card img {
     display: block;
     width: 100%;
@@ -3598,24 +3617,32 @@ span.shot-line {
     }
 
     .dock {
-        width: calc(100% - 12px);
-        gap: 0;
-        justify-content: space-between;
+        width: max-content;
+        max-width: calc(100% - 32px);
+        gap: 4px;
     }
 
-    .dock > a {
-        font-size: 12px;
-        padding: 8px 6px;
+    .dock-sil,
+    .dock-fan {
+        left: 50%;
+        width: min(240px, 72vw);
+        height: 320px;
+    }
+
+    .dock-sil span,
+    .dock-fan a {
+        height: 40px;
+        padding: 0 16px;
     }
 
     .dock-sil span:nth-child(1),
-    .dock-fan a:nth-child(1) { --x: 18px; --y: -46px; }
+    .dock-fan a:nth-child(1) { --x: 0px; --y: -56px; }
     .dock-sil span:nth-child(2),
-    .dock-fan a:nth-child(2) { --x: 18px; --y: -90px; }
+    .dock-fan a:nth-child(2) { --x: 0px; --y: -120px; }
     .dock-sil span:nth-child(3),
-    .dock-fan a:nth-child(3) { --x: 18px; --y: -134px; }
+    .dock-fan a:nth-child(3) { --x: 0px; --y: -184px; }
     .dock-sil span:nth-child(4),
-    .dock-fan a:nth-child(4) { --x: 18px; --y: -178px; }
+    .dock-fan a:nth-child(4) { --x: 0px; --y: -248px; }
 
     .site-footer {
         padding: 8px 16px 160px;
@@ -3665,6 +3692,17 @@ span.shot-line {
         --gap: 300px;
         --yaw: 58deg;
         perspective: 620px;
+    }
+
+    .sphere-rows figure {
+        border-radius: 10px;
+    }
+
+    .sphere-card.is-facing figure,
+    .sphere-plate,
+    .hall-card img,
+    .hall-select {
+        border-radius: 8px;
     }
 
     .shot-frame {

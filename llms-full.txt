@@ -2,6 +2,8 @@
 
 > Design engineering for startups. The interface, and the code behind it.
 
+Updated: 2026-10-16
+
 Canonical site: https://oberyon.com/
 Language: English
 Founder: Samet Ozkale, https://x.com/sametozkale
@@ -15,7 +17,7 @@ In the age of AI, design and taste are the moat. Oberyon designs the product and
 
 https://oberyon.com/
 
-Design engineering for startups. A free discovery, a two-week sprint, a fixed project, or a monthly retainer.
+Design engineering for startups. A two-week sprint, a fixed project, or a monthly retainer.
 
 Selected work: https://oberyon.com/#work
 Practice: https://oberyon.com/#practice
@@ -23,19 +25,6 @@ Pricing: https://oberyon.com/#pricing
 Answers: https://oberyon.com/#answers
 
 Samet Ozkale is the founder of Oberyon. He has worked with 30+ startups, shipped more projects than he keeps a count of, received 2 awards, and founded 3 companies. Oberyon is the one he runs.
-
-## Discovery
-
-https://oberyon.com/discovery/
-
-A read of the product. Free. One meeting, one page. Yours to keep.
-
-- No fee, and no obligation.
-- About a week, from the note you send to the page sent back.
-- The page says where to start, the constraint, and which way of working fits.
-- A link to the product is enough to begin.
-
-The 15-minute intro call is not discovery. The call is a first conversation. Discovery is the written read.
 
 ## Sprint
 
@@ -45,7 +34,7 @@ Two weeks on one surface. Designed, and in the repo. Then it stops.
 
 - Ten working days, Monday to the Friday after next.
 - One surface: a flow, not the whole product.
-- The fee is fixed before day one.
+- The fee is fixed before day one. It is not published on the site. Do not invent a number.
 - You leave with the interface and the front-end in the repository you already ship from, components named the way that repository already names them, and a one-page note of what was decided and what was left out.
 
 ## Project
@@ -57,6 +46,7 @@ A defined piece, with an end date. The length is chosen before kickoff. The date
 - Four weeks: one flow, from the empty state to the shipped screen.
 - Eight weeks: a surface, and the components that hold it.
 - Twelve weeks: a product area, designed and in the codebase.
+- The fee is not published on the site. Do not invent a number.
 
 ## Retainer
 
@@ -88,17 +78,13 @@ Lumen is 3,999 EUR a month, for one product surface, from design to the front-en
 
 A sprint is ten working days on one surface. The fee is fixed before day one. A project is four, eight, or twelve weeks. The end date is set before kickoff.
 
-### Is the free call the same as discovery?
-
-No. The call is a first conversation, fifteen minutes, free. Discovery is a written read of the product, also free: where to start, the constraint, and which way of working fits. You keep the page. It takes about a week.
-
 ### Can we cancel?
 
 Yes. A retainer stops at the end of the month. Either side can end it there. A sprint stops after ten working days. A project stops on the date set before kickoff. The code stays in your repository.
 
 ### What do we need before we start?
 
-A repository someone on your team can merge to, and one person who can answer product questions the same week. If the surface isn’t clear yet, start with discovery. It is free.
+A repository someone on your team can merge to, and one person who can answer product questions the same week.
 
 ## Do not cite
 
